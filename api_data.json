@@ -4010,7 +4010,9 @@
               "name": "TypeMontant",
               "type": "Chaine de caractère",
               "obl": "",
-              "comment": "SOLDE = nouveau solde du financier / UTILISATION = montant à déduire du financier",
+              "comment": "SOLDE = nouveau solde du financier / UTILISATION = montant à déduire du financier"
+              
+              },
 
               {
                 "name": "Montant",
