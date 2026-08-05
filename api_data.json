@@ -3986,7 +3986,7 @@
           ]
         },
         {
-          "name": "ResultUtilisationFinanciers",
+          "name": "UtilisationFinancier",
           "props": [
             {
               "name": "NumeroSerie",
@@ -4011,27 +4011,27 @@
               "type": "Chaine de caractère",
               "obl": "",
               "comment": "SOLDE = nouveau solde du financier / UTILISATION = montant à déduire du financier"
-              
-              },
 
-              {
-                "name": "Montant",
-                "type": "Decimal",
-                "obl": "X",
-                "comment": "Montant utilisé ou solde du financier"
-              },
-              {
-                "name": "ACloturer",
-                "type": "Booléen (1 ou 0)",
-                "obl": "X",
-                "comment": "Indique si le financier doit être clôturé."
-              },
-              {
-                "name": "Remboursements",
-                "type": "List<RemboursementFinancier>",
-                "obl": "",
-                "comment": "Contient les remboursements effectués pour solder le financier."
-              }
+            },
+
+            {
+              "name": "Montant",
+              "type": "Decimal",
+              "obl": "X",
+              "comment": "Montant utilisé ou solde du financier"
+            },
+            {
+              "name": "ACloturer",
+              "type": "Booléen (1 ou 0)",
+              "obl": "X",
+              "comment": "Indique si le financier doit être clôturé."
+            },
+            {
+              "name": "Remboursements",
+              "type": "List<RemboursementFinancier>",
+              "obl": "",
+              "comment": "Contient les remboursements effectués pour solder le financier."
+            }
           ]
         }
       ]
