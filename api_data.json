@@ -1,0 +1,1388 @@
+{
+    "doc_date": "05 Août 2026",
+    "services": [
+        {
+            "id": "part1",
+            "title": "1. Référence",
+            "methods": [
+                {
+                    "name": "referencement_b2c_sku",
+                    "description": "Récupérer les SKU des références attachées à un référencement.",
+                    "params": [
+                        {
+                            "name": "codeSociete",
+                            "type": "Alpha(10)",
+                            "obl": "X (1)",
+                            "comment": "Code société"
+                        },
+                        {
+                            "name": "idtSociete",
+                            "type": "Num(5,0)",
+                            "obl": "X (1)",
+                            "comment": "Identifiant Prios société (forcer à 0 si code utilisé)"
+                        },
+                        {
+                            "name": "codeLangue",
+                            "type": "Alpha(10)",
+                            "obl": "X (2)",
+                            "comment": "Code langue"
+                        },
+                        {
+                            "name": "idtLangue",
+                            "type": "Num(5,0)",
+                            "obl": "X (2)",
+                            "comment": "Identifiant Prios langue"
+                        },
+                        {
+                            "name": "codeReferencement",
+                            "type": "Alpha(10)",
+                            "obl": "X (3)",
+                            "comment": "Code du référencement"
+                        },
+                        {
+                            "name": "idtReferencement",
+                            "type": "Num(5,0)",
+                            "obl": "X (3)",
+                            "comment": "Identifiant Prios référencement"
+                        }
+                    ],
+                    "returns_type": "Liste de MSWREFList00PLISTERFR_SKU08Result",
+                    "returns_props": [
+                        {
+                            "name": "catalogue",
+                            "type": "Alpha(30)",
+                            "obl": "",
+                            "comment": "Libellé du catalogue/saison"
+                        },
+                        {
+                            "name": "codeColorisHexa",
+                            "type": "Alpha(10)",
+                            "obl": "",
+                            "comment": "Code coloris hexadécimal"
+                        },
+                        {
+                            "name": "codeConcept",
+                            "type": "Alpha(10)",
+                            "obl": "",
+                            "comment": "Code concept"
+                        },
+                        {
+                            "name": "codeEtat",
+                            "type": "Alpha(1)",
+                            "obl": "",
+                            "comment": "Non suivi (N), Epuisable (E), Suivi (S)"
+                        },
+                        {
+                            "name": "codeReference",
+                            "type": "Alpha(15)",
+                            "obl": "",
+                            "comment": "Code référence/coloris"
+                        },
+                        {
+                            "name": "codeSKU",
+                            "type": "Alpha(18)",
+                            "obl": "",
+                            "comment": "Code SKU"
+                        },
+                        {
+                            "name": "codeSuivi",
+                            "type": "Alpha(3)",
+                            "obl": "",
+                            "comment": "En cours (CRT), A valider (AVA), Valide (VAL), etc."
+                        },
+                        {
+                            "name": "codeTaille",
+                            "type": "Alpha(5)",
+                            "obl": "",
+                            "comment": "Taille"
+                        },
+                        {
+                            "name": "gtin",
+                            "type": "Num(14,0)",
+                            "obl": "",
+                            "comment": "EAN unique"
+                        },
+                        {
+                            "name": "idtReference",
+                            "type": "Num(7,0)",
+                            "obl": "",
+                            "comment": "Identifiant de la référence/coloris"
+                        },
+                        {
+                            "name": "idtSKU",
+                            "type": "Num(15,0)",
+                            "obl": "",
+                            "comment": "[key_sku]"
+                        },
+                        {
+                            "name": "codeTraitement",
+                            "type": "Alpha(1)",
+                            "obl": "",
+                            "comment": "'T': ok, 'X': erreur"
+                        },
+                        {
+                            "name": "message",
+                            "type": "Alpha(250)",
+                            "obl": "",
+                            "comment": "Libellé du message"
+                        }
+                    ]
+                },
+                {
+                    "name": "referencement_b2c_sku_avec_complements",
+                    "description": "Récupérer les SKU des références avec les compléments du PIM et les looks.",
+                    "params": [
+                        {
+                            "name": "codeSociete",
+                            "type": "Alpha(10)",
+                            "obl": "X (1)",
+                            "comment": "Code Société"
+                        },
+                        {
+                            "name": "idtSociete",
+                            "type": "Num(5,0)",
+                            "obl": "X (1)",
+                            "comment": "Identifiant Prios société"
+                        },
+                        {
+                            "name": "codeLangue",
+                            "type": "Alpha(10)",
+                            "obl": "X (2)",
+                            "comment": "Code langue"
+                        },
+                        {
+                            "name": "idtLangue",
+                            "type": "Num(5,0)",
+                            "obl": "X (2)",
+                            "comment": "Identifiant Prios langue"
+                        },
+                        {
+                            "name": "codeReferencement",
+                            "type": "Alpha(10)",
+                            "obl": "X (3)",
+                            "comment": "Code du référencement"
+                        },
+                        {
+                            "name": "idtReferencement",
+                            "type": "Num(5,0)",
+                            "obl": "X (3)",
+                            "comment": "Identifiant Prios référencement"
+                        }
+                    ],
+                    "returns_type": "Plusieurs listes retournées",
+                    "returns": "Retourne une Liste de MSWREFList00PLISTERFR_SKU10Result, Liste de MSWREFListPLISTERUBRIQUE_11Result et Liste de MSWREFList0PLISTELOOK_REF12Result."
+                },
+                {
+                    "name": "referencement_b2c_prix",
+                    "description": "Récupérer les prix de vente 'actifs' consommateur.",
+                    "params": [
+                        {
+                            "name": "codeSociete",
+                            "type": "Alpha(10)",
+                            "obl": "X (1)",
+                            "comment": "Code société"
+                        },
+                        {
+                            "name": "idtSociete",
+                            "type": "Num(5,0)",
+                            "obl": "X (1)",
+                            "comment": "Identifiant Prios société"
+                        },
+                        {
+                            "name": "codeTiersPDV",
+                            "type": "Alpha(10)",
+                            "obl": "X (2)",
+                            "comment": "Code du tiers point de vente"
+                        },
+                        {
+                            "name": "numTiersPDV",
+                            "type": "Num(7,0)",
+                            "obl": "X (2)",
+                            "comment": "Identifiant Prios du tiers point de vente"
+                        },
+                        {
+                            "name": "codeReference",
+                            "type": "Alpha(15)",
+                            "obl": "X (3)",
+                            "comment": "Code référence/coloris"
+                        },
+                        {
+                            "name": "IdtReferencePx",
+                            "type": "Num(7,0)",
+                            "obl": "X (3)",
+                            "comment": "Identifiant Prios référence/coloris"
+                        },
+                        {
+                            "name": "codeModele",
+                            "type": "Alpha(10)",
+                            "obl": "X (3)",
+                            "comment": "Code du modèle"
+                        },
+                        {
+                            "name": "idtModelePx",
+                            "type": "Num(7,0)",
+                            "obl": "X (3)",
+                            "comment": "Identifiant Prios du modèle"
+                        },
+                        {
+                            "name": "codeReferencement",
+                            "type": "Alpha(10)",
+                            "obl": "X (3)",
+                            "comment": "Code du référencement"
+                        },
+                        {
+                            "name": "idtReferencement",
+                            "type": "Num(5,0)",
+                            "obl": "X (3)",
+                            "comment": "Identifiant Prios référencement"
+                        }
+                    ],
+                    "returns_type": "Liste de MSWREFList00000PLISTEPRIX09Result",
+                    "returns_props": [
+                        {
+                            "name": "codeDevise",
+                            "type": "Alpha(3)",
+                            "obl": "",
+                            "comment": "Code devise ('EUR', 'USD'...)"
+                        },
+                        {
+                            "name": "codeSKU",
+                            "type": "Alpha(18)",
+                            "obl": "",
+                            "comment": "Code SKU"
+                        },
+                        {
+                            "name": "codeTaille",
+                            "type": "Alpha(5)",
+                            "obl": "",
+                            "comment": "Taille"
+                        },
+                        {
+                            "name": "numGTIN",
+                            "type": "Num(14,0)",
+                            "obl": "",
+                            "comment": "EAN unique"
+                        },
+                        {
+                            "name": "numTarif",
+                            "type": "Num(14,0)",
+                            "obl": "",
+                            "comment": "Numéro Prios du tarif"
+                        },
+                        {
+                            "name": "prixPromo",
+                            "type": "Num(13,2)",
+                            "obl": "",
+                            "comment": "Prix net T.T.C. (à afficher)"
+                        },
+                        {
+                            "name": "prixVente",
+                            "type": "Num(13,2)",
+                            "obl": "",
+                            "comment": "Prix brut T.T.C. (à barrer)"
+                        },
+                        {
+                            "name": "codeTraitement",
+                            "type": "Alpha(1)",
+                            "obl": "",
+                            "comment": "'T' ok, 'X' erreur"
+                        }
+                    ]
+                }
+            ],
+            "types": []
+        },
+        {
+            "id": "part2",
+            "title": "2. Stock",
+            "methods": [
+                {
+                    "name": "stock_a_vendre_b2c",
+                    "description": "Permet la récupération des types de stock (à vendre, réservé, physique, maxi).",
+                    "params": [
+                        {
+                            "name": "codeSociete",
+                            "type": "Alpha(10)",
+                            "obl": "X (1)",
+                            "comment": "Code société"
+                        },
+                        {
+                            "name": "idtSociete",
+                            "type": "Num(5,0)",
+                            "obl": "X (1)",
+                            "comment": "Identifiant Prios société"
+                        },
+                        {
+                            "name": "codeTiersPDV",
+                            "type": "Alpha(10)",
+                            "obl": "X (2)",
+                            "comment": "Code du tiers point de vente"
+                        },
+                        {
+                            "name": "numTiersPDV",
+                            "type": "Num(7,0)",
+                            "obl": "X (2)",
+                            "comment": "Identifiant Prios du tiers point de vente"
+                        },
+                        {
+                            "name": "typeStock",
+                            "type": "Alpha(1)",
+                            "obl": "X",
+                            "comment": "V (vendre), T (vendre infini), R (réservé), P (physique), M (maxi)"
+                        }
+                    ],
+                    "returns_type": "Liste de MSWSTKList0PLISTESTOCKSKU15Result",
+                    "returns_props": [
+                        {
+                            "name": "codeSKU",
+                            "type": "Alpha(18)",
+                            "obl": "",
+                            "comment": "Code SKU"
+                        },
+                        {
+                            "name": "quantiteStock",
+                            "type": "Num(13,4)",
+                            "obl": "",
+                            "comment": "Quantité stock"
+                        },
+                        {
+                            "name": "typeLigne",
+                            "type": "Alpha(1)",
+                            "obl": "",
+                            "comment": "V, T, R, P, M"
+                        }
+                    ]
+                },
+                {
+                    "name": "expose_stock_lieu",
+                    "description": "Permet la récupération de stock sur entrepôt ou points de vente.",
+                    "params": [
+                        {
+                            "name": "socId",
+                            "type": "Num(5,0)",
+                            "obl": "X",
+                            "comment": "Identifiant Prios société"
+                        },
+                        {
+                            "name": "pNumtiers",
+                            "type": "Num(7,0)",
+                            "obl": "X (1)",
+                            "comment": "Liste des numéros de tiers Prios (PDV ou entrepôt)"
+                        },
+                        {
+                            "name": "physiquePointdeVente",
+                            "type": "Alpha(1)",
+                            "obl": "X (1)",
+                            "comment": "(O/N) Stock physique du point de vente"
+                        },
+                        {
+                            "name": "disponibleEntrepot",
+                            "type": "Alpha(1)",
+                            "obl": "X (1)",
+                            "comment": "(O/N) Stock disponible entrepôt"
+                        }
+                    ],
+                    "returns_type": "Liste de MSWSTKList0PLISTESTOCKSKU02Result",
+                    "returns_props": [
+                        {
+                            "name": "codTai",
+                            "type": "Alpha(5)",
+                            "comment": "Taille"
+                        },
+                        {
+                            "name": "codeSku",
+                            "type": "Alpha(18)",
+                            "comment": "Code SKU"
+                        },
+                        {
+                            "name": "quantiteStock",
+                            "type": "Num(13,4)",
+                            "comment": "Quantité stock"
+                        },
+                        {
+                            "name": "typeLigne",
+                            "type": "Alpha(1)",
+                            "comment": "P, D, M, V, E, S, L, A"
+                        },
+                        {
+                            "name": "typeTiers",
+                            "type": "Alpha(10)",
+                            "comment": "PDV ou LOG"
+                        }
+                    ]
+                }
+            ],
+            "types": []
+        },
+        {
+            "id": "part3",
+            "title": "3. Commande",
+            "methods": [
+                {
+                    "name": "integrer_liste_commande_pdv",
+                    "description": "Permet d'intégrer des commandes liées à un PDV (EShop ...).",
+                    "params": [
+                        {
+                            "name": "codeSociete",
+                            "type": "Alpha(10)",
+                            "obl": "X (1)",
+                            "comment": "Code société"
+                        },
+                        {
+                            "name": "idtSociete",
+                            "type": "Num(5,0)",
+                            "obl": "X (1)",
+                            "comment": "Identifiant Prios société"
+                        },
+                        {
+                            "name": "listeCommandeEshop",
+                            "type": "List<CommandeEshop>",
+                            "obl": "X",
+                            "comment": "Liste des commandes"
+                        },
+                        {
+                            "name": "listeCommandeEshopLignes",
+                            "type": "List<LigneCommandeEshop>",
+                            "obl": "X",
+                            "comment": "Liste des lignes (articles)"
+                        }
+                    ],
+                    "returns_type": "MSWCOMListPLISTECOMMANDET23Result",
+                    "returns_props": [
+                        {
+                            "name": "idtSociete",
+                            "type": "Num(5,0)",
+                            "obl": "",
+                            "comment": "Identifiant Prios société"
+                        },
+                        {
+                            "name": "idtCommandeEshop",
+                            "type": "Num(15,0)",
+                            "obl": "",
+                            "comment": "Identifiant commande du site"
+                        },
+                        {
+                            "name": "codeTicket",
+                            "type": "Alpha(20)",
+                            "obl": "",
+                            "comment": "Code ticket"
+                        },
+                        {
+                            "name": "codeTraitement",
+                            "type": "Alpha(1)",
+                            "obl": "",
+                            "comment": "T: ok, X: erreur"
+                        }
+                    ]
+                }
+            ],
+            "types": []
+        },
+        {
+            "id": "part4",
+            "title": "4. Tiers",
+            "methods": [
+                {
+                    "name": "infos_code_tiers",
+                    "description": "Retourne les informations du tiers à partir de son code.",
+                    "params": [
+                        {
+                            "name": "idSociete",
+                            "type": "Num(5,0)",
+                            "obl": "X",
+                            "comment": "Identifiant Prios société"
+                        },
+                        {
+                            "name": "listeCodeTiers",
+                            "type": "Liste",
+                            "obl": "X",
+                            "comment": "Liste des codes de tiers"
+                        }
+                    ],
+                    "returns_type": "Liste de MSWCLIListPLISTETRAITEMEN02Result",
+                    "returns_props": [
+                        {
+                            "name": "numeroTiers",
+                            "type": "Num(7,0)",
+                            "obl": "",
+                            "comment": "Identifiant Prios du tiers"
+                        },
+                        {
+                            "name": "codeTiersTrt",
+                            "type": "Alpha(10)",
+                            "obl": "",
+                            "comment": "Code du tiers"
+                        }
+                    ]
+                }
+            ],
+            "types": []
+        },
+        {
+            "id": "part5",
+            "title": "5. Api-e supply-chain",
+            "methods": [
+                {
+                    "name": "/v1/supplierInvoices",
+                    "description": "Importer des factures fournisseurs dans Prios E.",
+                    "params": [
+                        {
+                            "name": "auxiliaryAccount",
+                            "type": "Alpha(10)",
+                            "obl": "X",
+                            "comment": "Compte auxiliaire"
+                        },
+                        {
+                            "name": "supplierInvoice",
+                            "type": "SupplierInvoice",
+                            "obl": "X",
+                            "comment": "Entête de facture"
+                        }
+                    ],
+                    "returns": "Code HTTP (201, 406, 400, 500)"
+                }
+            ],
+            "types": [
+                {
+                    "name": "SupplierInvoice",
+                    "props": [
+                        {
+                            "name": "idCompany",
+                            "type": "Num(5,0)",
+                            "obl": "X",
+                            "comment": "Identifiant société"
+                        },
+                        {
+                            "name": "supplierInvoiceNumber",
+                            "type": "Alpha(15)",
+                            "obl": "X",
+                            "comment": "N° de facture fournisseur"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "part6",
+            "title": "6. Ventes",
+            "methods": [
+                {
+                    "name": "CreerTicketVente",
+                    "description": "Permet d'enregistrer des ventes réalisées en magasin.",
+                    "params": [
+                        {
+                            "name": "idSiteExterne",
+                            "type": "int64",
+                            "obl": "X",
+                            "comment": "Identifiant du site externe"
+                        },
+                        {
+                            "name": "cleControle",
+                            "type": "string",
+                            "obl": "X",
+                            "comment": "Clé de contrôle"
+                        },
+                        {
+                            "name": "codeExtBoutique",
+                            "type": "string",
+                            "obl": "X",
+                            "comment": "Code boutique de la vente"
+                        },
+                        {
+                            "name": "ticket",
+                            "type": "TicketEntete",
+                            "obl": "X",
+                            "comment": "Objet métier contenant le ticket"
+                        }
+                    ],
+                    "returns_type": "RetourCreationVente",
+                    "returns_props": [
+                        {
+                            "name": "RetourTraitement",
+                            "type": "Int32",
+                            "obl": "X",
+                            "comment": "0: OK, 1: Erreur id, 2: Boutique inconnue..."
+                        },
+                        {
+                            "name": "Detail",
+                            "type": "List<String>",
+                            "obl": "",
+                            "comment": "Détails ou erreurs de structure du ticket"
+                        }
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "TicketEntete",
+                    "props": [
+                        {
+                            "name": "TypeTicket",
+                            "type": "String",
+                            "obl": "",
+                            "comment": "V (vente valide) ou C (abandonné)"
+                        },
+                        {
+                            "name": "DateDebut",
+                            "type": "DateTime",
+                            "obl": "X",
+                            "comment": "Date de début du ticket"
+                        },
+                        {
+                            "name": "NumeroTckExterne",
+                            "type": "String",
+                            "obl": "X",
+                            "comment": "Numéro de ticket externe"
+                        },
+                        {
+                            "name": "CodeClient",
+                            "type": "String",
+                            "obl": "",
+                            "comment": "Code client rattaché"
+                        },
+                        {
+                            "name": "Details",
+                            "type": "List<TicketDetail>",
+                            "obl": "X",
+                            "comment": "Lignes articles du ticket"
+                        },
+                        {
+                            "name": "Encaissements",
+                            "type": "List<TicketEncaissement>",
+                            "obl": "X",
+                            "comment": "Modes de règlement"
+                        },
+                        {
+                            "name": "AcomptesEmis",
+                            "type": "List<Acompte>",
+                            "obl": "",
+                            "comment": "Acomptes émis (si Details contient Acompte=1)"
+                        },
+                        {
+                            "name": "OffresCommerciales",
+                            "type": "List<TicketInfosOffreCo>",
+                            "obl": "",
+                            "comment": "Offres commerciales utilisées"
+                        },
+                        {
+                            "name": "DocumentsDivers",
+                            "type": "List<TicketDocumentDivers>",
+                            "obl": "",
+                            "comment": "Chèques cadeaux / réductions globales"
+                        }
+                    ]
+                },
+                {
+                    "name": "TicketDetail",
+                    "props": [
+                        {
+                            "name": "NumeroLigne",
+                            "type": "Int32",
+                            "obl": "X",
+                            "comment": "Unique au sein du ticket"
+                        },
+                        {
+                            "name": "Quantite",
+                            "type": "Int64",
+                            "obl": "X",
+                            "comment": "Quantité (limité à 1 si financier)"
+                        },
+                        {
+                            "name": "GTIN",
+                            "type": "String(50)",
+                            "obl": "X",
+                            "comment": "Code-barre article (0 si financier)"
+                        },
+                        {
+                            "name": "PUBrut",
+                            "type": "Int64",
+                            "obl": "X",
+                            "comment": "Prix brut (multiplié par 100000)"
+                        },
+                        {
+                            "name": "PUNet",
+                            "type": "Int64",
+                            "obl": "X",
+                            "comment": "Prix net (multiplié par 100000)"
+                        },
+                        {
+                            "name": "PUHT",
+                            "type": "Int64",
+                            "obl": "X",
+                            "comment": "Prix HT (multiplié par 100000)"
+                        },
+                        {
+                            "name": "Gratuit",
+                            "type": "Boolean",
+                            "obl": "X",
+                            "comment": "True si gratuit"
+                        },
+                        {
+                            "name": "Remises",
+                            "type": "List<TicketDetailRemise>",
+                            "obl": "",
+                            "comment": "Remises appliquées à l'article"
+                        },
+                        {
+                            "name": "TypeTicketDetail",
+                            "type": "String",
+                            "obl": "",
+                            "comment": "'A': article, 'F': financier"
+                        },
+                        {
+                            "name": "RetourNumeroTckExterneVenteInitiale",
+                            "type": "String",
+                            "obl": "",
+                            "comment": "Pour les retours, ticket de vente d'origine"
+                        },
+                        {
+                            "name": "Acompte",
+                            "type": "Boolean",
+                            "obl": "",
+                            "comment": "Indique que l'article est un acompte"
+                        },
+                        {
+                            "name": "AcompteNumeroExterne",
+                            "type": "String",
+                            "obl": "X*",
+                            "comment": "Obligatoire si Acompte=1"
+                        },
+                        {
+                            "name": "FinancierType",
+                            "type": "String",
+                            "obl": "X*",
+                            "comment": "Obligatoire si TypeTicketDetail='F'"
+                        },
+                        {
+                            "name": "FinancierNumeroExterne",
+                            "type": "String",
+                            "obl": "",
+                            "comment": "Numéro de série du financier (carte cadeau, avoir)"
+                        }
+                    ]
+                },
+                {
+                    "name": "TicketDetailRemise",
+                    "props": [
+                        {
+                            "name": "NumeroRemise",
+                            "type": "Int32",
+                            "obl": "X",
+                            "comment": "Numéro de la remise"
+                        },
+                        {
+                            "name": "MontantRemiseValeur",
+                            "type": "Int64",
+                            "obl": "",
+                            "comment": "Montant en valeur (x100000)"
+                        },
+                        {
+                            "name": "NomRemise",
+                            "type": "String",
+                            "obl": "X",
+                            "comment": "Nom de la remise"
+                        }
+                    ]
+                },
+                {
+                    "name": "TicketEncaissement",
+                    "props": [
+                        {
+                            "name": "NumeroLigne",
+                            "type": "Int32",
+                            "obl": "X",
+                            "comment": "Numéro de ligne"
+                        },
+                        {
+                            "name": "CodeModeReglement",
+                            "type": "String",
+                            "obl": "X",
+                            "comment": "Mode de paiement (ex: CB, LENGOW)"
+                        },
+                        {
+                            "name": "Montant",
+                            "type": "Int64",
+                            "obl": "X",
+                            "comment": "Montant du paiement (x100000)"
+                        },
+                        {
+                            "name": "FinancierEmission",
+                            "type": "Boolean",
+                            "obl": "",
+                            "comment": "0: Utilisation, 1: Emission (création d'avoir)"
+                        },
+                        {
+                            "name": "FinancierEmisType",
+                            "type": "String",
+                            "obl": "X*",
+                            "comment": "Type (AVOIR, CARTE_CDX...)"
+                        }
+                    ]
+                },
+                {
+                    "name": "Acompte",
+                    "props": [
+                        {
+                            "name": "AcompteNumeroExterne",
+                            "type": "String",
+                            "obl": "X",
+                            "comment": "Numéro externe de l'acompte"
+                        },
+                        {
+                            "name": "Montant",
+                            "type": "Int64",
+                            "obl": "X",
+                            "comment": "Montant TTC (x100000)"
+                        }
+                    ]
+                },
+                {
+                    "name": "TicketInfosOffreCo",
+                    "props": [
+                        {
+                            "name": "Rang",
+                            "type": "Int32",
+                            "obl": "X",
+                            "comment": "Rang de l'offre"
+                        },
+                        {
+                            "name": "CodeOffreCo",
+                            "type": "String",
+                            "obl": "X",
+                            "comment": "Code de l'offre commerciale"
+                        },
+                        {
+                            "name": "LignesAffectees",
+                            "type": "List<TicketInfosOffreCoDetail>",
+                            "obl": "X",
+                            "comment": "Lignes concernées"
+                        }
+                    ]
+                },
+                {
+                    "name": "TicketInfosOffreCoDetail",
+                    "props": [
+                        {
+                            "name": "NumeroLigne",
+                            "type": "Int32",
+                            "obl": "X",
+                            "comment": "Numéro ligne article"
+                        },
+                        {
+                            "name": "Montant",
+                            "type": "Int64",
+                            "obl": "X",
+                            "comment": "Remise appliquée"
+                        }
+                    ]
+                },
+                {
+                    "name": "TicketDocumentDivers",
+                    "props": [
+                        {
+                            "name": "TypeDocumentDivers",
+                            "type": "String",
+                            "obl": "X",
+                            "comment": "Type de doc"
+                        },
+                        {
+                            "name": "NumeroExterne",
+                            "type": "String",
+                            "obl": "X",
+                            "comment": "Code barre du chèque ou autre"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "part7",
+            "title": "7. Offres Commerciales",
+            "methods": [
+                {
+                    "name": "CalculerOffresCommerciales",
+                    "description": "Détecter et appliquer les offres commerciales d'un ticket.",
+                    "params": [
+                        {
+                            "name": "idSiteExterne",
+                            "type": "int64",
+                            "obl": "X",
+                            "comment": "Identifiant du site externe"
+                        },
+                        {
+                            "name": "cleControle",
+                            "type": "string",
+                            "obl": "X",
+                            "comment": "Clé de contrôle"
+                        },
+                        {
+                            "name": "TicketOffreAAnalyser",
+                            "type": "TicketOffreCo",
+                            "obl": "X",
+                            "comment": "Ticket à analyser"
+                        }
+                    ],
+                    "returns_type": "TicketOffreCoRetourne",
+                    "returns_props": [
+                        {
+                            "name": "DateTicket",
+                            "type": "DateTime",
+                            "obl": "X",
+                            "comment": ""
+                        },
+                        {
+                            "name": "ListLigneTicketOffreCoRetourne",
+                            "type": "List<LigneTicketOffreCoRetourne>",
+                            "obl": "X",
+                            "comment": ""
+                        },
+                        {
+                            "name": "ListResumeOffreCo",
+                            "type": "List<LigneResumeOffre>",
+                            "obl": "X",
+                            "comment": ""
+                        }
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "TicketOffreCo",
+                    "props": [
+                        {
+                            "name": "DateTicket",
+                            "type": "DateTime",
+                            "obl": "X",
+                            "comment": "Date AAAA-MM-JJTHH:MM:SS"
+                        },
+                        {
+                            "name": "NumeroTicket",
+                            "type": "String",
+                            "obl": "X",
+                            "comment": "N° ticket"
+                        },
+                        {
+                            "name": "IdBoutique",
+                            "type": "Int64",
+                            "obl": "X",
+                            "comment": "ID boutique"
+                        },
+                        {
+                            "name": "TypeIdentificationBoutique",
+                            "type": "Int32",
+                            "obl": "X",
+                            "comment": "0=Liberty, 1=Autre"
+                        },
+                        {
+                            "name": "CodeBarreCarteClient",
+                            "type": "String",
+                            "obl": "",
+                            "comment": "Carte client"
+                        },
+                        {
+                            "name": "ListLigneTicketOffreCo",
+                            "type": "List<LigneTicketOffreCo>",
+                            "obl": "X",
+                            "comment": "Lignes articles"
+                        }
+                    ]
+                },
+                {
+                    "name": "LigneTicketOffreCo",
+                    "props": [
+                        {
+                            "name": "NumeroLigneTicket",
+                            "type": "Int32",
+                            "obl": "X",
+                            "comment": "Numéro unique ligne"
+                        },
+                        {
+                            "name": "GTIN",
+                            "type": "String",
+                            "obl": "X",
+                            "comment": "Code barre"
+                        },
+                        {
+                            "name": "Qte",
+                            "type": "Single",
+                            "obl": "X",
+                            "comment": "Quantité"
+                        },
+                        {
+                            "name": "PrixBrutUnitaire",
+                            "type": "Single",
+                            "obl": "X",
+                            "comment": "Prix brut TTC"
+                        },
+                        {
+                            "name": "PrixNetUnitaire",
+                            "type": "Single",
+                            "obl": "X",
+                            "comment": "Prix net TTC"
+                        }
+                    ]
+                },
+                {
+                    "name": "LigneTicketOffreCoRetourne",
+                    "props": [
+                        {
+                            "name": "NumeroLigneTicket",
+                            "type": "Int32",
+                            "obl": "X",
+                            "comment": "Numéro de la ligne"
+                        },
+                        {
+                            "name": "GTIN",
+                            "type": "String",
+                            "obl": "X",
+                            "comment": "Code barre"
+                        },
+                        {
+                            "name": "PrixNetUnitaire",
+                            "type": "Single",
+                            "obl": "X",
+                            "comment": "Prix après application offres"
+                        },
+                        {
+                            "name": "ListeDetailRemises",
+                            "type": "List<LigneDetailRemise>",
+                            "obl": "X",
+                            "comment": "Détails des remises (le cumul justifie la diff brut/net)"
+                        }
+                    ]
+                },
+                {
+                    "name": "LigneDetailRemise",
+                    "props": [
+                        {
+                            "name": "TypeRemise",
+                            "type": "Int32",
+                            "obl": "X",
+                            "comment": "0: Aucune, 1: Fidélité, 2: Tarif, 3: Offre co"
+                        },
+                        {
+                            "name": "ValeurRemise",
+                            "type": "Single",
+                            "obl": "X",
+                            "comment": "Montant unitaire"
+                        },
+                        {
+                            "name": "IDOffreCommerciale",
+                            "type": "Int64",
+                            "obl": "",
+                            "comment": "ID de l'offre appliquée"
+                        },
+                        {
+                            "name": "LibelleOffreCommerciale",
+                            "type": "String",
+                            "obl": "",
+                            "comment": "Libellé"
+                        }
+                    ]
+                },
+                {
+                    "name": "LigneResumeOffre",
+                    "props": [
+                        {
+                            "name": "IDOffreCommerciale",
+                            "type": "Int64",
+                            "obl": "X",
+                            "comment": "Identifiant de l'offre"
+                        },
+                        {
+                            "name": "LibelleOffreCommerciale",
+                            "type": "String",
+                            "obl": "X",
+                            "comment": "Libellé consolidé"
+                        },
+                        {
+                            "name": "ValeurRemise",
+                            "type": "Single",
+                            "obl": "X",
+                            "comment": "Montant total de la remise"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "part8",
+            "title": "8. CRM",
+            "methods": [
+                {
+                    "name": "CreationModification",
+                    "description": "Créer ou modifier une liste de clients.",
+                    "params": [
+                        {
+                            "name": "SiteExterne",
+                            "type": "Entier (long)",
+                            "obl": "",
+                            "comment": "Id lien externe"
+                        },
+                        {
+                            "name": "NumCleControle",
+                            "type": "Chaine de caractère",
+                            "obl": "",
+                            "comment": "Clé"
+                        },
+                        {
+                            "name": "ListeClients",
+                            "type": "List<ClientExterne>",
+                            "obl": "",
+                            "comment": "Clients à maj ou créer"
+                        }
+                    ],
+                    "returns_type": "ResultCreationModificationClient",
+                    "returns_props": [
+                        {
+                            "name": "ListClientExterne",
+                            "type": "List<ClientExterne>",
+                            "comment": "Clients modifiés/créés"
+                        },
+                        {
+                            "name": "ListeErreursDetail",
+                            "type": "List<String>",
+                            "comment": "Détails d'erreurs"
+                        }
+                    ]
+                },
+                {
+                    "name": "RechercherClient",
+                    "description": "Rechercher un client (par mail, n° externe, GTIN).",
+                    "params": [
+                        {
+                            "name": "TypeRecherche",
+                            "type": "Entier (int)",
+                            "obl": "",
+                            "comment": "0: NumExterne, 1: GTIN, 2: Mail"
+                        },
+                        {
+                            "name": "ValeursRecherchees",
+                            "type": "List<string>",
+                            "obl": "",
+                            "comment": "Valeurs à rechercher"
+                        }
+                    ],
+                    "returns_type": "ResultRechercheClient",
+                    "returns_props": [
+                        {
+                            "name": "ListClientExterne",
+                            "type": "List<ClientExterne>",
+                            "comment": "Clients trouvés"
+                        }
+                    ]
+                },
+                {
+                    "name": "CreationFinanciers",
+                    "description": "Permet de créer des financiers (Avoirs, Cartes cadeaux...).",
+                    "params": [
+                        {
+                            "name": "FinanciersACreer",
+                            "type": "List<Financier>",
+                            "obl": "X",
+                            "comment": "Liste des financiers à créer"
+                        }
+                    ],
+                    "returns_type": "ResultCreationFinanciers",
+                    "returns_props": [
+                        {
+                            "name": "ListeFinanciers",
+                            "type": "List<Financier>",
+                            "comment": "Financiers créés"
+                        }
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "ClientExterne",
+                    "props": [
+                        {
+                            "name": "ValeurClientExterne",
+                            "type": "Chaine de caractère",
+                            "obl": "",
+                            "comment": "Numéro d'identification externe"
+                        },
+                        {
+                            "name": "ValeurCiviliteExterne",
+                            "type": "Chaine de caractère",
+                            "obl": "",
+                            "comment": "Code civilité"
+                        },
+                        {
+                            "name": "PrenomClient",
+                            "type": "Chaine de caractère",
+                            "obl": "",
+                            "comment": ""
+                        },
+                        {
+                            "name": "NomClient",
+                            "type": "Chaine de caractère",
+                            "obl": "",
+                            "comment": ""
+                        },
+                        {
+                            "name": "DateNaissance",
+                            "type": "Datetime",
+                            "obl": "",
+                            "comment": ""
+                        },
+                        {
+                            "name": "GTIN",
+                            "type": "Chaine de caractère",
+                            "obl": "",
+                            "comment": "N° carte fidélité"
+                        },
+                        {
+                            "name": "ListeAdresseClientExterne",
+                            "type": "List<AdresseClientExterne>",
+                            "obl": "",
+                            "comment": "Adresses du client"
+                        },
+                        {
+                            "name": "ListeCoordonneClientExterne",
+                            "type": "List<CoordonneClientExterne>",
+                            "obl": "",
+                            "comment": "Coordonnées du client (tél, mail)"
+                        }
+                    ]
+                },
+                {
+                    "name": "AdresseClientExterne",
+                    "props": [
+                        {
+                            "name": "Adresse1",
+                            "type": "Chaine de caractère (50)",
+                            "obl": "",
+                            "comment": "Ligne 1"
+                        },
+                        {
+                            "name": "CodePostal",
+                            "type": "Chaine de caractère",
+                            "obl": "",
+                            "comment": ""
+                        },
+                        {
+                            "name": "LibelleVille",
+                            "type": "Chaine de caractère",
+                            "obl": "",
+                            "comment": ""
+                        },
+                        {
+                            "name": "ValeurPaysExterne",
+                            "type": "Chaine de caractère",
+                            "obl": "",
+                            "comment": "Code ISO pays"
+                        },
+                        {
+                            "name": "TypeAdresse",
+                            "type": "Chaine de caractère",
+                            "obl": "",
+                            "comment": "LIV, DOM, BUR, FACTURATION..."
+                        },
+                        {
+                            "name": "AdressePrincipal",
+                            "type": "Booléen",
+                            "obl": "",
+                            "comment": "Adresse principale = 1"
+                        }
+                    ]
+                },
+                {
+                    "name": "CoordonneClientExterne",
+                    "props": [
+                        {
+                            "name": "TypeCoordonne",
+                            "type": "Chaine de caractère (50)",
+                            "obl": "",
+                            "comment": "MAIL - Principal, TEL - Portable, TEL - Domicile"
+                        },
+                        {
+                            "name": "Coordonnees",
+                            "type": "Chaine de caractère (50)",
+                            "obl": "",
+                            "comment": "Valeur (le numéro ou l'email)"
+                        },
+                        {
+                            "name": "CommunicationCommerciale",
+                            "type": "Booléen",
+                            "obl": "",
+                            "comment": "Opt-in offres"
+                        },
+                        {
+                            "name": "CommunicationNewsLetter",
+                            "type": "Booléen",
+                            "obl": "",
+                            "comment": "Opt-in newsletter"
+                        },
+                        {
+                            "name": "Principal",
+                            "type": "Booléen",
+                            "obl": "",
+                            "comment": "Principal = 1"
+                        }
+                    ]
+                },
+                {
+                    "name": "Financier",
+                    "props": [
+                        {
+                            "name": "NumeroSerie",
+                            "type": "Chaine de caractère",
+                            "obl": "X*",
+                            "comment": "Généré par Prios (non obl en création)"
+                        },
+                        {
+                            "name": "FinancierNumeroExterne",
+                            "type": "Chaine de caractère",
+                            "obl": "X*",
+                            "comment": "Obligatoire lors d'une création"
+                        },
+                        {
+                            "name": "CodeType",
+                            "type": "Chaine de caractère",
+                            "obl": "X",
+                            "comment": "Type (AVOIR, CARTE_CDX...)"
+                        },
+                        {
+                            "name": "Libelle",
+                            "type": "Chaine de caractère",
+                            "obl": "X",
+                            "comment": "Libellé"
+                        },
+                        {
+                            "name": "MontantInitial",
+                            "type": "Decimal",
+                            "obl": "X",
+                            "comment": "Montant (0 si pourcentage)"
+                        },
+                        {
+                            "name": "MontantEnCours",
+                            "type": "Decimal",
+                            "obl": "X",
+                            "comment": "Reste à utiliser"
+                        },
+                        {
+                            "name": "Actif",
+                            "type": "Booléen",
+                            "obl": "X",
+                            "comment": "1 = actif, 0 = non actif"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "part9",
+            "title": "9. Cross canal",
+            "methods": [],
+            "types": []
+        },
+        {
+            "id": "part10",
+            "title": "10. Annexe",
+            "methods": [],
+            "types": []
+        }
+    ]
+}
