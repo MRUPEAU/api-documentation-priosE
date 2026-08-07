@@ -12,45 +12,51 @@
             {
               "name": "codeSociete",
               "type": "Alpha(10)",
-              "obl": "X (1)",
+              "obl": "X",
+              "obl_note": "1",
               "comment": "Code société"
             },
             {
               "name": "idtSociete",
               "type": "Num(5,0)",
-              "obl": "X (1)",
+              "obl": "X",
+              "obl_note": "1",
               "comment": "Identifiant Prios société (forcer à 0 si code utilisé)"
             },
             {
               "name": "codeLangue",
               "type": "Alpha(10)",
-              "obl": "X (2)",
+              "obl": "X",
+              "obl_note": "2",
               "comment": "Code langue"
             },
             {
               "name": "idtLangue",
               "type": "Num(5,0)",
-              "obl": "X (2)",
+              "obl": "X",
+              "obl_note": "2",
               "comment": "Identifiant Prios langue"
             },
             {
               "name": "codeReferencement",
               "type": "Alpha(10)",
-              "obl": "X (3)",
+              "obl": "X",
+              "obl_note": "3",
               "comment": "Code du référencement"
             },
             {
               "name": "idtReferencement",
               "type": "Num(5,0)",
-              "obl": "X (3)",
+              "obl": "X",
+              "obl_note": "3",
               "comment": "Identifiant Prios référencement"
             }
           ],
-          "notes": [
-            "(1) Il faut renseigner le code ou l'identifiant de la société.",
-            "(2) Il faut renseigner le code ou l'identifiant de la langue.",
-            "(3) Il faut renseigner le code ou l'identifiant du référencement."
-          ],
+          "notes": {
+            "1": "Il faut renseigner le code ou l'identifiant de la société.",
+            "2": "Il faut renseigner le code ou l'identifiant de la langue.",
+            "3": "Il faut renseigner le code ou l'identifiant du référencement."
+          },
           "returns_type": "Liste de MSWREFList00PLISTERFR_SKU08Result",
           "returns_props": [
             {
