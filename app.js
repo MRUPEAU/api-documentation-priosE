@@ -97,6 +97,18 @@ function render() {
                                     ${m.params.map(p => `<tr><td><code>${p.name}</code></td><td>${linkify(p.type)}</td><td class="text-center"><strong>${p.obl || ''}</strong></td><td>${p.comment || ''}</td></tr>`).join('')}
                                 </tbody>
                             </table>`;
+
+                        // Affichage des notes pour la méthode ---
+                        if (m.notes && m.notes.length > 0) {
+                            serviceContent += `
+                                        <div class="p-2 mb-4 bg-light text-muted border rounded" style="font-size: 0.9em;">
+                                            <ul class="mb-0 ps-3" style="list-style-type: none; padding-left: 0 !important;">
+                                                ${m.notes.map(note => `<li><small>${escapeHtml(note)}</small></li>`).join('')}
+                                            </ul>
+                                        </div>`;
+                        } else {
+                            serviceContent += `<div class="mb-4"></div>`; // Espace si pas de note
+                        }
                     } else {
                         serviceContent += `<p class="text-muted"><em>Aucun paramètre entrant.</em></p>`;
                     }
@@ -166,6 +178,15 @@ function render() {
                             </table>
                         </div>
                     </div>`;
+
+                    if (t.notes && t.notes.length > 0) {
+                        serviceContent += `
+                                    <div class="p-2 mb-4 bg-light text-muted border rounded" style="font-size: 0.9em; margin-top: -20px;">
+                                        <ul class="mb-0 ps-3" style="list-style-type: none; padding-left: 0 !important;">
+                                            ${t.notes.map(note => `<li><small>${escapeHtml(note)}</small></li>`).join('')}
+                                        </ul>
+                                    </div>`;
+                    }
                 });
             }
         }

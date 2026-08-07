@@ -46,6 +46,11 @@
               "comment": "Identifiant Prios référencement"
             }
           ],
+          "notes": [
+            "(1) Il faut renseigner le code ou l'identifiant de la société.",
+            "(2) Il faut renseigner le code ou l'identifiant de la langue.",
+            "(3) Il faut renseigner le code ou l'identifiant du référencement."
+          ],
           "returns_type": "Liste de MSWREFList00PLISTERFR_SKU08Result",
           "returns_props": [
             {
