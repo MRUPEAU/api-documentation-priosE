@@ -111,8 +111,23 @@
             "2": "Il faut renseigner le code ou l'identifiant de la langue.",
             "3": "Il faut renseigner le code ou l'identifiant du référencement."
           },
-          "returns_type": "Plusieurs listes retournées",
-          "returns": "Retourne une Liste de MSWREFList00PLISTERFR_SKU10Result, Liste de MSWREFListPLISTERUBRIQUE_11Result et Liste de MSWREFList0PLISTELOOK_REF12Result."
+          "returns_type": [
+            {
+              "label": "Liste des SKU & Références",
+              "type": "Liste de MSWREFList00PLISTERFR_SKU10Result",
+              "comment": "Données principales des articles et déclinaisons SKU."
+            },
+            {
+              "label": "Compléments PIM / Rubriques",
+              "type": "Liste de MSWREFListPLISTERUBRIQUE_11Result",
+              "comment": "Champs dynamiques et descriptifs additionnels (liés par idtReferenceRub)."
+            },
+            {
+              "label": "Looks & Assortiments",
+              "type": "Liste de MSWREFList0PLISTELOOK_REF12Result",
+              "comment": "Associations de looks / silhouettes (liés par idtReferenceLook)."
+            }
+          ]
         },
         {
           "name": "referencement_b2c_prix",

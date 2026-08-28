@@ -168,18 +168,93 @@ function render() {
                     }
 
                     // Analyse et affichage de ce que la méthode Retourne
-                    let returnTypeRaw = m.returns || m.returns_type;
-                    let cleanRetType = cleanTypeName(returnTypeRaw);
-                    let matchedType = null; // On va chercher si ce type de retour est décrit dans notre JSON
+                    // Analyse et affichage de ce que la méthode Retourne
+                    serviceContent += `<h6 class="text-secondary">Retourne:</h6>`;
 
-                    for (let s of apiData.services) {
-                        if (s.types) {
-                            let found = s.types.find(t => t.name === cleanRetType);
-                            if (found) { matchedType = found; break; }
+                    if (m.returns_types && m.returns_types.length > 0) {
+                        // Cas multi-listes : Rendu professionnel par cartes/onglets avec maillage et tableaux complets
+                        serviceContent += `<div class="multi-returns-container mb-3">`;
+
+                        m.returns_types.forEach((retItem, rIdx) => {
+                            let cleanType = cleanTypeName(retItem.type);
+                            let matchedType = null;
+                            for (let s of apiData.services) {
+                                if (s.types) {
+                                    matchedType = s.types.find(t => t.name === cleanType);
+                                    if (matchedType) break;
+                                }
+                            }
+
+                            serviceContent += `
+        <div class="card border-primary-subtle mb-3 shadow-sm">
+            <div class="card-header bg-light-subtle d-flex justify-content-between align-items-center py-2">
+                <span class="fw-semibold text-primary">
+                    <i class="bi bi-collection me-1"></i> ${escapeHtml(retItem.label || 'Liste')} : ${linkify(retItem.type)}
+                </span>
+                ${retItem.comment ? `<small class="text-muted">${escapeHtml(retItem.comment)}</small>` : ''}
+            </div>
+            ${matchedType ? `
+            <div class="card-body p-0">
+                <div class="table-responsive" style="max-height: 260px; overflow-y: auto;">
+                    <table class="table table-sm table-hover table-bordered mb-0 align-middle">
+                        <thead class="table-light sticky-top">
+                            <tr><th class="ps-3 w-25">Propriété</th><th>Type</th><th class="text-center">Obl.</th><th>Commentaires</th></tr>
+                        </thead>
+                        <tbody>
+                            ${matchedType.props.map(p => `
+                                <tr>
+                                    <td class="ps-3"><code>${p.name}</code></td>
+                                    <td>${linkify(p.type)}</td>
+                                    <td class="text-center text-danger fw-bold">${p.obl || ''}</td>
+                                    <td>${escapeHtml(p.comment || '')}</td>
+                                </tr>`).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>` : ''}
+        </div>`;
+                        });
+
+                        serviceContent += `</div>`;
+                    } else {
+                        // Cas standard (type unique existant)
+                        let returnTypeRaw = m.returns || m.returns_type;
+                        let cleanRetType = cleanTypeName(returnTypeRaw);
+                        let matchedType = null;
+
+                        for (let s of apiData.services) {
+                            if (s.types) {
+                                let found = s.types.find(t => t.name === cleanRetType);
+                                if (found) { matchedType = found; break; }
+                            }
+                        }
+
+                        if (matchedType) {
+                            serviceContent += `
+                                <div class="alert alert-light border">
+                                    <strong>Type de retour : </strong> ${linkify(returnTypeRaw)}<br><br>
+                                    <table class="table table-sm table-bordered bg-white mb-0">
+                                        <thead class="table-light"><tr><th class="w-25">Propriété</th><th>Type</th><th>Obl.</th><th>Commentaires</th></tr></thead>
+                                        <tbody>
+                                            ${matchedType.props.map(p => `<tr><td><code>${p.name}</code></td><td>${linkify(p.type)}</td><td class="text-center text-danger fw-bold">${p.obl || ''}</td><td>${escapeHtml(p.comment || '')}</td></tr>`).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>`;
+                                            } else if (m.returns_props && m.returns_props.length > 0) {
+                                                serviceContent += `
+                                <div class="alert alert-light border">
+                                    <strong>Type de retour : </strong> ${linkify(m.returns_type || 'Objet détaillé')}<br><br>
+                                    <table class="table table-sm table-bordered bg-white mb-0">
+                                        <thead class="table-light"><tr><th class="w-25">Propriété</th><th>Type</th><th>Commentaires</th></tr></thead>
+                                        <tbody>
+                                            ${m.returns_props.map(p => `<tr><td><code>${p.name}</code></td><td>${linkify(p.type)}</td><td>${escapeHtml(p.comment || '')}</td></tr>`).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>`;
+                        } else if (returnTypeRaw) {
+                            serviceContent += `<p class="fs-6">${linkify(returnTypeRaw)}</p>`;
                         }
                     }
-
-                    serviceContent += `<h6 class="text-secondary">Retourne:</h6>`;
 
                     // Si le type retourné est un objet connu, on dessine son tableau de propriétés
                     if (matchedType) {
@@ -357,14 +432,23 @@ function showUsages(targetType) {
     apiData.services.forEach(service => {
         if (service.methods) {
             service.methods.forEach(m => {
-                // Est-ce que le type de retour correspond ?
+                // Détection dans returns_types (multiples)
+                if (m.returns_types) {
+                    m.returns_types.forEach(rt => {
+                        if (cleanTypeName(rt.type) === targetType) {
+                            usages.push(`<li><strong>${service.title}</strong> : Retourné dans la méthode <a class="type-link" href="javascript:void(0)" onclick="navigateTo('${service.id}', 'method-${m.name}')">${m.name}</a> (<em>${escapeHtml(rt.label || 'Liste')}</em>)</li>`);
+                        }
+                    });
+                }
+
+                // Détection dans returns_type / returns simple
                 if (m.returns_type && cleanTypeName(m.returns_type) === targetType) {
                     usages.push(`<li><strong>${service.title}</strong> : Retourné par la méthode <a class="type-link" href="javascript:void(0)" onclick="navigateTo('${service.id}', 'method-${m.name}')">${m.name}</a></li>`);
                 } else if (m.returns && cleanTypeName(m.returns) === targetType) {
                     usages.push(`<li><strong>${service.title}</strong> : Retourné par la méthode <a class="type-link" href="javascript:void(0)" onclick="navigateTo('${service.id}', 'method-${m.name}')">${m.name}</a></li>`);
                 }
 
-                // Est-ce que un des paramètres d'entrée correspond ?
+                // Paramètres d'entrée
                 if (m.params) {
                     m.params.forEach(p => {
                         if (cleanTypeName(p.type) === targetType) {
