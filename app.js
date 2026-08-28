@@ -525,7 +525,7 @@ function showUsages(targetType) {
                                         <strong>${escapeHtml(service.title)}</strong> : Paramètre <code>${escapeHtml(p.name)}</code> dans la méthode 
                                         <a class="type-link fw-semibold" href="javascript:void(0)" onclick="navigateTo('${service.id}', 'method-${m.name}')">${escapeHtml(m.name)}</a>
                                     </li>
-                                `} `);
+                                `});
                             }
                         });
                     }
