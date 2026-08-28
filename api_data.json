@@ -7,7 +7,7 @@
       "methods": [
         {
           "name": "referencement_b2c_sku",
-          "description": "Récupérer les SKU des références attachées à un référencement.",
+          "description": "Récupérer les SKU des références attachées à un référencement. API à appeler autant de fois que de langues désirées.",
           "params": [
             {
               "name": "codeSociete",
@@ -35,7 +35,7 @@
               "type": "Num(5,0)",
               "obl": "X",
               "obl_note": "2",
-              "comment": "Identifiant Prios langue"
+              "comment": "Identifiant Prios langue (forcer à 0 si code utilisé)"
             },
             {
               "name": "codeReferencement",
@@ -49,7 +49,7 @@
               "type": "Num(5,0)",
               "obl": "X",
               "obl_note": "3",
-              "comment": "Identifiant Prios référencement"
+              "comment": "Identifiant Prios référencement (forcer à 0 si code utilisé)"
             }
           ],
           "notes": {
@@ -57,74 +57,7 @@
             "2": "Il faut renseigner le code ou l'identifiant de la langue.",
             "3": "Il faut renseigner le code ou l'identifiant du référencement."
           },
-          "returns_type": "Liste de MSWREFList00PLISTERFR_SKU08Result",
-          "returns_props": [
-            {
-              "name": "catalogue",
-              "type": "Alpha(30)",
-              "comment": "Libellé du catalogue/saison"
-            },
-            {
-              "name": "codeColorisHexa",
-              "type": "Alpha(10)",
-              "comment": "Code coloris hexadécimal"
-            },
-            {
-              "name": "codeConcept",
-              "type": "Alpha(10)",
-              "comment": "Code concept"
-            },
-            {
-              "name": "codeEtat",
-              "type": "Alpha(1)",
-              "comment": "Non suivi (N), Epuisable (E), Suivi (S)"
-            },
-            {
-              "name": "codeReference",
-              "type": "Alpha(15)",
-              "comment": "Code référence/coloris"
-            },
-            {
-              "name": "codeSKU",
-              "type": "Alpha(18)",
-              "comment": "Code SKU"
-            },
-            {
-              "name": "codeSuivi",
-              "type": "Alpha(3)",
-              "comment": "En cours (CRT), A valider (AVA), Valide (VAL), etc."
-            },
-            {
-              "name": "codeTaille",
-              "type": "Alpha(5)",
-              "comment": "Taille"
-            },
-            {
-              "name": "gtin",
-              "type": "Num(14,0)",
-              "comment": "EAN unique"
-            },
-            {
-              "name": "idtReference",
-              "type": "Num(7,0)",
-              "comment": "Identifiant de la référence/coloris"
-            },
-            {
-              "name": "idtSKU",
-              "type": "Num(15,0)",
-              "comment": "[key_sku]"
-            },
-            {
-              "name": "codeTraitement",
-              "type": "Alpha(1)",
-              "comment": "'T': ok, 'X': erreur"
-            },
-            {
-              "name": "message",
-              "type": "Alpha(250)",
-              "comment": "Libellé du message"
-            }
-          ]
+          "returns_type": "Liste de MSWREFList00PLISTERFR_SKU08Result"      
         },
         {
           "name": "referencement_b2c_sku_avec_complements",
@@ -385,6 +318,76 @@
         }
       ],
       "types": [
+        {
+          "name": "MSWREFList00PLISTERFR_SKU08Result",
+          "props": [
+            {
+              "name": "catalogue",
+              "type": "Alpha(30)",
+              "comment": "Libellé du catalogue/saison"
+            },
+            {
+              "name": "codeColorisHexa",
+              "type": "Alpha(10)",
+              "comment": "Code coloris hexadécimal"
+            },
+            {
+              "name": "codeConcept",
+              "type": "Alpha(10)",
+              "comment": "Code concept"
+            },
+            {
+              "name": "codeEtat",
+              "type": "Alpha(1)",
+              "comment": "Non suivi (N), Epuisable (E), Suivi (S)"
+            },
+            {
+              "name": "codeReference",
+              "type": "Alpha(15)",
+              "comment": "Code référence/coloris"
+            },
+            {
+              "name": "codeSKU",
+              "type": "Alpha(18)",
+              "comment": "Code SKU"
+            },
+            {
+              "name": "codeSuivi",
+              "type": "Alpha(3)",
+              "comment": "En cours (CRT), A valider (AVA), Valide (VAL), etc."
+            },
+            {
+              "name": "codeTaille",
+              "type": "Alpha(5)",
+              "comment": "Taille"
+            },
+            {
+              "name": "gtin",
+              "type": "Num(14,0)",
+              "comment": "EAN unique"
+            },
+            {
+              "name": "idtReference",
+              "type": "Num(7,0)",
+              "comment": "Identifiant de la référence/coloris"
+            },
+            {
+              "name": "idtSKU",
+              "type": "Num(15,0)",
+              "comment": "[key_sku]"
+            },
+            {
+              "name": "codeTraitement",
+              "type": "Alpha(1)",
+              "comment": "'T': ok, 'X': erreur"
+            },
+            {
+              "name": "message",
+              "type": "Alpha(250)",
+              "comment": "Libellé du message"
+            }
+          ]
+        },
         {
           "name": "MSWREFListPLISTERUBRIQUE_11Result",
           "props": [
