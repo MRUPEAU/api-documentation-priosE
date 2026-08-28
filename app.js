@@ -2,8 +2,16 @@
  * ====================================================================
  * DOCUMENTATION INTERACTIVE API PRIOS E - app.js
  * ====================================================================
+ * Ce fichier gère toute la logique dynamique de la documentation :
+ * 1. Chargement et parsing asynchrone du fichier api_data.json.
+ * 2. Génération automatique du DOM (onglets, cartes, tableaux scrollables).
+ * 3. Maillage hypertexte automatique des types de données (linkify).
+ * 4. Gestion des notes contextuelles et des infobulles interactives (tooltips).
+ * 5. Moteur d'analyse d'impact croisé ("Où est-ce utilisé ?").
+ * 6. Navigation fluide avec compensation de l'en-tête fixe et surbrillance.
  */
 
+// Variable globale contenant toutes les données de l'API chargées
 let apiData = {};
 
 // ====================================================================
@@ -12,38 +20,48 @@ let apiData = {};
 fetch('api_data.json')
     .then(response => {
         if (!response.ok) {
-            throw new Error("Erreur HTTP " + response.status);
+            throw new Error("Erreur HTTP " + response.status + " : impossible de récupérer api_data.json");
         }
         return response.json();
     })
     .then(data => {
         apiData = data;
+
+        // Mise à jour de la date dans le bandeau supérieur
         const docDateEl = document.getElementById('doc-date');
         if (docDateEl) {
             docDateEl.textContent = apiData.doc_date || "Non spécifiée";
         }
+
+        // Lancement de la construction de la page
         render();
     })
     .catch(error => {
-        console.error("Erreur de chargement :", error);
+        console.error("Erreur critique lors du chargement des données :", error);
+
         const docDateEl = document.getElementById('doc-date');
         if (docDateEl) docDateEl.textContent = "Erreur";
 
         const errorContainer = document.getElementById('error-container');
         if (errorContainer) {
             errorContainer.innerHTML = `
-                <div class="alert alert-danger shadow-sm my-4">
-                    <strong>Erreur :</strong> Impossible de charger <code>api_data.json</code>.<br>
-                    <small>Vérifiez la syntaxe JSON et assurez-vous d'utiliser un serveur web local.</small>
+                <div class="alert alert-danger shadow-sm my-4" role="alert">
+                    <h5 class="alert-heading fw-bold">Erreur de chargement</h5>
+                    <p class="mb-1">Impossible de charger le fichier <code>api_data.json</code>.</p>
+                    <hr>
+                    <p class="mb-0 small text-muted">Vérifiez la syntaxe du fichier JSON et assurez-vous d'exécuter la page depuis un serveur web local.</p>
                 </div>
             `;
         }
     });
 
 // ====================================================================
-// 2. FONCTIONS UTILITAIRES
+// 2. FONCTIONS UTILITAIRES & ASSISTANCE
 // ====================================================================
 
+/**
+ * Sécurise les textes HTML pour éviter les failles XSS et les erreurs de balises.
+ */
 function escapeHtml(unsafe) {
     return (unsafe || '')
         .toString()
@@ -54,6 +72,9 @@ function escapeHtml(unsafe) {
         .replace(/'/g, "&#039;");
 }
 
+/**
+ * Extrait le nom propre d'un type (ex: "Liste de MSW..." -> "MSW...").
+ */
 function cleanTypeName(typeStr) {
     if (!typeStr || typeof typeStr !== 'string') return "";
     return typeStr
@@ -64,6 +85,9 @@ function cleanTypeName(typeStr) {
         .trim();
 }
 
+/**
+ * Transforme le nom d'un type en lien cliquable s'il est répertorié dans la documentation.
+ */
 function linkify(typeStr) {
     if (!typeStr || typeof typeStr !== 'string') return "";
 
@@ -93,6 +117,9 @@ function linkify(typeStr) {
     return escapedType;
 }
 
+/**
+ * Initialise l'ensemble des infobulles Bootstrap (Tooltips) de la page.
+ */
 function initTooltips() {
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     tooltipTriggerList.forEach(tooltipTriggerEl => {
@@ -122,7 +149,7 @@ function render() {
         const isActive = index === 0 ? 'active' : '';
         const isShow = index === 0 ? 'show active' : '';
 
-        // Onglets supérieurs
+        // --- A. Boutons d'onglets supérieurs ---
         tabsHtml += `
             <li class="nav-item" role="presentation">
                 <button class="nav-link ${isActive}" 
@@ -137,6 +164,7 @@ function render() {
             </li>
         `;
 
+        // --- B. Contenu de la section active ---
         let serviceContent = '';
         const hasMethods = service.methods && service.methods.length > 0;
         const hasTypes = service.types && service.types.length > 0;
@@ -144,7 +172,9 @@ function render() {
         if (!hasMethods && !hasTypes) {
             serviceContent = `<div class="alert alert-secondary">Aucune méthode ou structure répertoriée dans cette section.</div>`;
         } else {
-            // --- Méthodes ---
+            // ========================================================
+            // B.1. Méthodes
+            // ========================================================
             if (hasMethods) {
                 serviceContent += `<h2 class="mb-4 pb-2 border-bottom">Méthodes</h2>`;
 
@@ -158,7 +188,7 @@ function render() {
                                 <p class="card-text">${escapeHtml(m.description || '')}</p>
                     `;
 
-                    // Tableau des paramètres
+                    // Tableau des paramètres entrants
                     if (m.params && m.params.length > 0) {
                         serviceContent += `
                             <h6 class="mt-4 mb-2 text-secondary fw-bold small text-uppercase">Paramètres :</h6>
@@ -221,6 +251,7 @@ function render() {
                     // Section Retour
                     serviceContent += `<h6 class="text-secondary fw-bold small text-uppercase mt-4 mb-2">Retourne :</h6>`;
 
+                    // CAS 1 : Retours composites multi-listes (tableau returns_types ou returns_type)
                     const multiReturns = Array.isArray(m.returns_types) ? m.returns_types : (Array.isArray(m.returns_type) ? m.returns_type : null);
 
                     if (multiReturns && multiReturns.length > 0) {
@@ -236,7 +267,6 @@ function render() {
                                 }
                             }
 
-                            // Aspect aligné sur les autres types : en-tête gris clair sobre, bordure standard
                             serviceContent += `
                             <div class="card mb-3 border">
                                 <div class="card-header bg-light text-dark d-flex justify-content-between align-items-center py-2">
@@ -273,6 +303,7 @@ function render() {
                         });
                         serviceContent += `</div>`;
                     } else {
+                        // CAS 2 : Retour simple (type unitaire)
                         const returnTypeRaw = m.returns || m.returns_type;
                         if (typeof returnTypeRaw === 'string') {
                             const cleanRetType = cleanTypeName(returnTypeRaw);
@@ -292,25 +323,28 @@ function render() {
                                             <strong>Type de retour : </strong> ${linkify(returnTypeRaw)}
                                         </div>
                                         <div class="card-body p-0">
-                                            <table class="table table-striped table-hover table-bordered mb-0 align-middle">
-                                                <thead class="table-light">
-                                                    <tr>
-                                                        <th class="ps-3 w-25">Propriété</th>
-                                                        <th>Type</th>
-                                                        <th class="text-center" style="width: 80px;">Obl.</th>
-                                                        <th>Commentaires</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    ${matchedType.props.map(p => `
+                                            <!-- Limitation de la hauteur à 260px avec scrollbar et en-tête figé -->
+                                            <div class="table-responsive" style="max-height: 260px; overflow-y: auto;">
+                                                <table class="table table-striped table-hover table-bordered mb-0 align-middle">
+                                                    <thead class="table-light sticky-top">
                                                         <tr>
-                                                            <td class="ps-3"><code>${escapeHtml(p.name)}</code></td>
-                                                            <td>${linkify(p.type)}</td>
-                                                            <td class="text-center text-danger fw-bold">${escapeHtml(p.obl || '')}</td>
-                                                            <td class="small text-secondary">${escapeHtml(p.comment || '')}</td>
-                                                        </tr>`).join('')}
-                                                </tbody>
-                                            </table>
+                                                            <th class="ps-3 w-25">Propriété</th>
+                                                            <th>Type</th>
+                                                            <th class="text-center" style="width: 80px;">Obl.</th>
+                                                            <th>Commentaires</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        ${matchedType.props.map(p => `
+                                                            <tr>
+                                                                <td class="ps-3"><code>${escapeHtml(p.name)}</code></td>
+                                                                <td>${linkify(p.type)}</td>
+                                                                <td class="text-center text-danger fw-bold">${escapeHtml(p.obl || '')}</td>
+                                                                <td class="small text-secondary">${escapeHtml(p.comment || '')}</td>
+                                                            </tr>`).join('')}
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>`;
                             } else if (m.returns_props && m.returns_props.length > 0) {
@@ -320,23 +354,26 @@ function render() {
                                             <strong>Type de retour : </strong> ${linkify(m.returns_type || 'Objet détaillé')}
                                         </div>
                                         <div class="card-body p-0">
-                                            <table class="table table-striped table-hover table-bordered mb-0 align-middle">
-                                                <thead class="table-light">
-                                                    <tr>
-                                                        <th class="ps-3 w-25">Propriété</th>
-                                                        <th>Type</th>
-                                                        <th>Commentaires</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    ${m.returns_props.map(p => `
+                                            <!-- Limitation de la hauteur pour les retours détaillés inline -->
+                                            <div class="table-responsive" style="max-height: 260px; overflow-y: auto;">
+                                                <table class="table table-striped table-hover table-bordered mb-0 align-middle">
+                                                    <thead class="table-light sticky-top">
                                                         <tr>
-                                                            <td class="ps-3"><code>${escapeHtml(p.name)}</code></td>
-                                                            <td>${linkify(p.type)}</td>
-                                                            <td class="small text-secondary">${escapeHtml(p.comment || '')}</td>
-                                                        </tr>`).join('')}
-                                                </tbody>
-                                            </table>
+                                                            <th class="ps-3 w-25">Propriété</th>
+                                                            <th>Type</th>
+                                                            <th>Commentaires</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        ${m.returns_props.map(p => `
+                                                            <tr>
+                                                                <td class="ps-3"><code>${escapeHtml(p.name)}</code></td>
+                                                                <td>${linkify(p.type)}</td>
+                                                                <td class="small text-secondary">${escapeHtml(p.comment || '')}</td>
+                                                            </tr>`).join('')}
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>`;
                             } else if (returnTypeRaw) {
@@ -349,7 +386,9 @@ function render() {
                 });
             }
 
-            // --- Types de Données ---
+            // ========================================================
+            // B.2. Types de Données (Définitions complètes)
+            // ========================================================
             if (hasTypes) {
                 serviceContent += `<h2 class="mt-5 mb-4 pb-2 border-bottom">Types de Données</h2>`;
 
@@ -437,7 +476,7 @@ function updateSidebar(serviceId) {
 
     let sbHtml = '';
 
-    // Méthodes (liens simples et sobres)
+    // Méthodes
     if (service.methods && service.methods.length > 0) {
         sbHtml += `<h6 class="text-uppercase text-secondary fw-bold small mt-3 mb-2 ps-1">Méthodes</h6><div class="mb-4">`;
         service.methods.forEach(m => {
@@ -453,7 +492,7 @@ function updateSidebar(serviceId) {
         sbHtml += `</div>`;
     }
 
-    // Types de données (liens simples et sobres)
+    // Types de données
     if (service.types && service.types.length > 0) {
         sbHtml += `<h6 class="text-uppercase text-secondary fw-bold small mt-3 mb-2 ps-1">Types de données</h6><div>`;
         service.types.forEach(t => {
@@ -531,8 +570,10 @@ function showUsages(targetType) {
 
     if (apiData.services && Array.isArray(apiData.services)) {
         apiData.services.forEach(service => {
+            // A. Analyse des méthodes
             if (service.methods) {
                 service.methods.forEach(m => {
+                    // Multi-retours
                     const multiReturns = Array.isArray(m.returns_types) ? m.returns_types : (Array.isArray(m.returns_type) ? m.returns_type : null);
                     if (multiReturns) {
                         multiReturns.forEach(rt => {
@@ -547,6 +588,7 @@ function showUsages(targetType) {
                             }
                         });
                     } else {
+                        // Retours simples
                         const ret = m.returns_type || m.returns;
                         if (typeof ret === 'string' && cleanTypeName(ret) === targetType) {
                             usages.push(`
@@ -558,6 +600,7 @@ function showUsages(targetType) {
                         }
                     }
 
+                    // Paramètres d'entrée
                     if (m.params) {
                         m.params.forEach(p => {
                             if (cleanTypeName(p.type) === targetType) {
@@ -573,6 +616,7 @@ function showUsages(targetType) {
                 });
             }
 
+            // B. Analyse des types imbriqués
             if (service.types) {
                 service.types.forEach(t => {
                     if (t.name !== targetType && t.props) {
