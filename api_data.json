@@ -57,7 +57,50 @@
             "2": "Il faut renseigner le code ou l'identifiant de la langue.",
             "3": "Il faut renseigner le code ou l'identifiant du référencement."
           },
-          "returns_type": "Liste de MSWREFList00PLISTERFR_SKU08Result"
+          "returns_type": "Liste de MSWREFList00PLISTERFR_SKU08Result",
+          "return_behavior": "Si aucune erreur, un enregistrement supplémentaire de fin de flux est renvoyé avec codeTraitement = 'T' et message = '#INF – XXXXX SKU transmis' (ou '#INF - 00000 SKU transmis' si vide).",
+          "errors": [
+            {
+              "message": "#ERR - ABSENCE id. ou code société",
+              "comment": "L’identifiant et le code société ne sont pas renseignés"
+            },
+            {
+              "message": "#ERR - ERREUR code société XXX",
+              "comment": "Le code société n’est pas reconnu"
+            },
+            {
+              "message": "#ERR - ERREUR identifiant société XXX",
+              "comment": "L’identifiant société n’est pas reconnu"
+            },
+            {
+              "message": "#ERR - ABSENCE id. ou code langue",
+              "comment": "L’identifiant et le code langue ne sont pas renseignés"
+            },
+            {
+              "message": "#ERR - ERREUR code langue XXX",
+              "comment": "Le code langue n’est pas reconnu"
+            },
+            {
+              "message": "#ERR - ERREUR identifiant langue XXX",
+              "comment": "L’identifiant de la langue n’est pas reconnu"
+            },
+            {
+              "message": "#ERR - ABSENCE id. ou code référencement",
+              "comment": "L’identifiant et le code du référencement ne sont pas renseignés"
+            },
+            {
+              "message": "#ERR - ERREUR code référencement XXX",
+              "comment": "Le code du référencement n’est pas reconnu"
+            },
+            {
+              "message": "#ERR - ERREUR identifiant référencement XXX",
+              "comment": "L’identifiant du référencement n’est pas reconnu"
+            },
+            {
+              "message": "#ERR - Référencement INACTIF XXX",
+              "comment": "Le référencement est inactif (par rapport aux dates de début/fin du référencement)"
+            }
+          ]
         },
         {
           "name": "referencement_b2c_sku_avec_complements",

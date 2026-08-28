@@ -382,9 +382,70 @@ function render() {
                         }
                     }
 
+                    // ============================================================
+                    // Comportement du retour (Message de synthèse #INF, etc.)
+                    // ============================================================
+                    if (m.return_behavior) {
+                        serviceContent += `
+                            <div class="alert alert-info py-2 px-3 my-3 small d-flex align-items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle-fill me-2 flex-shrink-0" viewBox="0 0 16 16">
+                                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                                </svg>
+                                <div>${escapeHtml(m.return_behavior)}</div>
+                            </div>
+                        `;
+                    }
+
+                    // ============================================================
+                    // Anomalies & Erreurs possibles (codeTraitement = 'X')
+                    // ============================================================
+                    if (m.errors && m.errors.length > 0) {
+                        const errorCollapseId = `errors-${m.name.replace(/[^a-zA-Z0-9_-]/g, '_')}`;
+
+                        serviceContent += `
+                            <div class="mt-3">
+                                <button class="btn btn-sm btn-outline-danger d-inline-flex align-items-center" 
+                                        type="button" 
+                                        data-bs-toggle="collapse" 
+                                        data-bs-target="#${errorCollapseId}" 
+                                        aria-expanded="false" 
+                                        aria-controls="${errorCollapseId}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-exclamation-triangle-fill me-1" viewBox="0 0 16 16">
+                                        <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                                    </svg>
+                                    Anomalies & Erreurs possibles (${m.errors.length})
+                                </button>
+                                
+                                <div class="collapse mt-2" id="${errorCollapseId}">
+                                    <div class="card card-body p-0 border-danger-subtle shadow-sm">
+                                        <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+                                            <table class="table table-sm table-hover table-striped mb-0 align-middle">
+                                                <thead class="table-light sticky-top">
+                                                    <tr>
+                                                        <th class="ps-3 w-50">Message retourné (<code>message</code>)</th>
+                                                        <th>Commentaires / Causes</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    ${m.errors.map(err => `
+                                                        <tr>
+                                                            <td class="ps-3"><code class="text-danger fw-semibold">${escapeHtml(err.message)}</code></td>
+                                                            <td class="small text-secondary">${escapeHtml(err.comment)}</td>
+                                                        </tr>
+                                                    `).join('')}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+
                     serviceContent += `</div></div>`;
                 });
             }
+
 
             // ========================================================
             // B.2. Types de Données (Définitions complètes)
