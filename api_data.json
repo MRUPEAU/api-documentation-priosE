@@ -61,45 +61,56 @@
         },
         {
           "name": "referencement_b2c_sku_avec_complements",
-          "description": "Récupérer les SKU des références avec les compléments du PIM et les looks.",
+          "description": "Récupérer les SKU des références attachées à un référencement [Soit par le contenu du filtre précisé, soit par les références présentes] avec les compléments du PIM et les looks (assortiments).",
           "params": [
             {
               "name": "codeSociete",
               "type": "Alpha(10)",
               "obl": "X",
+              "obl_note": "1",
               "comment": "Code Société"
             },
             {
               "name": "idtSociete",
               "type": "Num(5,0)",
               "obl": "X",
-              "comment": "Identifiant Prios société"
+              "obl_note": "1",
+              "comment": "Identifiant Prios société (forcer à 0 si code utilisé)"
             },
             {
               "name": "codeLangue",
               "type": "Alpha(10)",
               "obl": "X",
+              "obl_note": "2",
               "comment": "Code langue"
             },
             {
               "name": "idtLangue",
               "type": "Num(5,0)",
               "obl": "X",
-              "comment": "Identifiant Prios langue"
+              "obl_note": "2",
+              "comment": "Identifiant Prios langue (forcer à 0 si code utilisé)"
             },
             {
               "name": "codeReferencement",
               "type": "Alpha(10)",
               "obl": "X",
+              "obl_note": "3",
               "comment": "Code du référencement"
             },
             {
               "name": "idtReferencement",
               "type": "Num(5,0)",
               "obl": "X",
-              "comment": "Identifiant Prios référencement"
+              "obl_note": "3",
+              "comment": "Identifiant Prios référencement (forcer à 0 si code utilisé)"
             }
           ],
+          "notes": {
+            "1": "Il faut renseigner le code ou l'identifiant de la société.",
+            "2": "Il faut renseigner le code ou l'identifiant de la langue.",
+            "3": "Il faut renseigner le code ou l'identifiant du référencement."
+          },
           "returns_type": "Plusieurs listes retournées",
           "returns": "Retourne une Liste de MSWREFList00PLISTERFR_SKU10Result, Liste de MSWREFListPLISTERUBRIQUE_11Result et Liste de MSWREFList0PLISTELOOK_REF12Result."
         },
@@ -337,14 +348,74 @@
               "comment": "Code concept"
             },
             {
+              "name": "codeDescriptif1",
+              "type": "Alpha(10)",
+              "comment": "Code descriptif 1"
+            },
+            {
+              "name": "codeDescriptif2",
+              "type": "Alpha(10)",
+              "comment": "Code descriptif 2"
+            },
+            {
+              "name": "codeDescriptif3",
+              "type": "Alpha(10)",
+              "comment": "Code descriptif 3"
+            },
+            {
+              "name": "codeDescriptif4",
+              "type": "Alpha(10)",
+              "comment": "Code descriptif 4"
+            },
+            {
+              "name": "codeDescriptif5",
+              "type": "Alpha(10)",
+              "comment": "Code descriptif 5"
+            },
+            {
               "name": "codeEtat",
               "type": "Alpha(1)",
-              "comment": "Non suivi (N), Epuisable (E), Suivi (S)"
+              "comment": "Non suivi (N), Epuisable (E), Suivi + autres états (S)"
+            },
+            {
+              "name": "codeFournisseur",
+              "type": "Alpha(10)",
+              "comment": "Code du fournisseur principal"
+            },
+            {
+              "name": "codeGrilleTaille",
+              "type": "Alpha(10)",
+              "comment": "Code grille de taille"
+            },
+            {
+              "name": "codeMarcheSpecial",
+              "type": "Alpha(10)",
+              "comment": "Code marché spécial"
+            },
+            {
+              "name": "codeModele",
+              "type": "Alpha(10)",
+              "comment": "Code du modèle. Regroupe les références/coloris"
+            },
+            {
+              "name": "codeNomenclatureDouaniere",
+              "type": "Alpha(10)",
+              "comment": "Code nomenclature douanière"
+            },
+            {
+              "name": "codePaysOrigine",
+              "type": "Alpha(2)",
+              "comment": "Code ISO du pays d’origine"
             },
             {
               "name": "codeReference",
               "type": "Alpha(15)",
               "comment": "Code référence/coloris"
+            },
+            {
+              "name": "codeRegimeTaxe",
+              "type": "Alpha(10)",
+              "comment": "Code regime de taxe"
             },
             {
               "name": "codeSKU",
@@ -354,7 +425,7 @@
             {
               "name": "codeSuivi",
               "type": "Alpha(3)",
-              "comment": "En cours (CRT), A valider (AVA), Valide (VAL), etc."
+              "comment": "En cours de création (CRT), A valider (AVA), Valide (VAL), Annulée (ANN), Abandonnée (ABA), Suspendue (SUS)"
             },
             {
               "name": "codeTaille",
@@ -362,9 +433,129 @@
               "comment": "Taille"
             },
             {
+              "name": "codeTailleMaxi",
+              "type": "Alpha(5)",
+              "comment": "Taille maxi autorisée à la vente pour la référence/coloris"
+            },
+            {
+              "name": "codeTailleMini",
+              "type": "Alpha(5)",
+              "comment": "Taille mini autorisée à la vente pour la référence/coloris"
+            },
+            {
+              "name": "codeTaxeSpecifique",
+              "type": "Alpha(10)",
+              "comment": "Code taxe spécifique"
+            },
+            {
+              "name": "collectionMrq",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la collection"
+            },
+            {
+              "name": "coloris",
+              "type": "Alpha(30)",
+              "comment": "Libellé du coloris"
+            },
+            {
+              "name": "colorisTechnique",
+              "type": "Alpha(30)",
+              "comment": "Libellé du regroupement de coloris"
+            },
+            {
+              "name": "composition",
+              "type": "Alpha(60)",
+              "comment": "Composition"
+            },
+            {
+              "name": "concept",
+              "type": "Alpha(30)",
+              "comment": "Libellé du concept"
+            },
+            {
+              "name": "descriptif1",
+              "type": "Alpha(30)",
+              "comment": "Libellé descriptif 1"
+            },
+            {
+              "name": "descriptif2",
+              "type": "Alpha(30)",
+              "comment": "Libellé descriptif 2"
+            },
+            {
+              "name": "descriptif3",
+              "type": "Alpha(30)",
+              "comment": "Libellé descriptif 3"
+            },
+            {
+              "name": "descriptif4",
+              "type": "Alpha(30)",
+              "comment": "Libellé descriptif 4"
+            },
+            {
+              "name": "descriptif5",
+              "type": "Alpha(30)",
+              "comment": "Libellé descriptif 5"
+            },
+            {
+              "name": "descriptifMarketing",
+              "type": "Alpha(3000)",
+              "comment": "Descriptif marketing"
+            },
+            {
+              "name": "designationMarketing",
+              "type": "Alpha(300)",
+              "comment": "Désignation marketing"
+            },
+            {
+              "name": "designationMod",
+              "type": "Alpha(30)",
+              "comment": "Libellé du modèle"
+            },
+            {
+              "name": "designationReduite",
+              "type": "Alpha(20)",
+              "comment": "Libellé réduit de la référence/coloris"
+            },
+            {
+              "name": "designationRef",
+              "type": "Alpha(50)",
+              "comment": "Libellé de la référence/coloris"
+            },
+            {
+              "name": "empreinteCarbone",
+              "type": "Num(9,3)",
+              "comment": "Empreinte carbone de la référence/coloris"
+            },
+            {
+              "name": "familleComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la famille commerciale"
+            },
+            {
+              "name": "familleTech",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la famille technique"
+            },
+            {
+              "name": "grilleTaille",
+              "type": "Alpha(30)",
+              "comment": "Libellé grille de taille"
+            },
+            {
               "name": "gtin",
               "type": "Num(14,0)",
-              "comment": "EAN unique"
+              "comment": "EAN [unique]"
+            },
+            {
+              "name": "hauteurCm",
+              "type": "Num(5,0)",
+              "comment": "Hauteur référence /coloris"
+            },
+            {
+              "name": "idtModele",
+              "type": "Num(5,0)",
+              "comment": "Identifiant du modèle"
             },
             {
               "name": "idtReference",
@@ -377,14 +568,520 @@
               "comment": "[key_sku]"
             },
             {
+              "name": "imageLarge",
+              "type": "blob",
+              "comment": "Non utilisé"
+            },
+            {
+              "name": "imageMedium",
+              "type": "blob",
+              "comment": "Non utilisé"
+            },
+            {
+              "name": "imageSmall",
+              "type": "blob",
+              "comment": "Non utilisé"
+            },
+            {
+              "name": "indiceTaille",
+              "type": "Num(2,0)",
+              "comment": "Position de la taille/pointure dans la grille"
+            },
+            {
+              "name": "largeurCm",
+              "type": "Num(5,0)",
+              "comment": "Largeur référence /coloris"
+            },
+            {
+              "name": "ligneComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la ligne commerciale"
+            },
+            {
+              "name": "ligneTech",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la ligne tecnhique"
+            },
+            {
+              "longueurCm": "longueurCm",
+              "name": "longueurCm",
+              "type": "Num(5,0)",
+              "comment": "Longueur référence /coloris"
+            },
+            {
+              "name": "marcheSpecial",
+              "type": "Alpha(30)",
+              "comment": "Libellé du marché spécial"
+            },
+            {
+              "name": "marque",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la marque"
+            },
+            {
+              "name": "poidsKg",
+              "type": "Num(5,3)",
+              "comment": "Poids de la référence/coloris"
+            },
+            {
+              "name": "regimeTaxe",
+              "type": "Alpha(30)",
+              "comment": "Libellé du régime de taxe"
+            },
+            {
+              "name": "regroupementFamilleComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé regroupement famille commerciale"
+            },
+            {
+              "name": "regroupementLigneComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé regroupement ligne commerciale"
+            },
+            {
+              "name": "regroupementSsFamilleComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé regroupement sous-famille commerciale"
+            },
+            {
+              "name": "ssFamilleComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé sous- famille commerciale"
+            },
+            {
+              "name": "ssFamilleTech",
+              "type": "Alpha(30)",
+              "comment": "Libellé sous- famille technique"
+            },
+            {
+              "name": "taxeSpecifique",
+              "type": "Alpha(30)",
+              "comment": "Libellé taxe spécifique"
+            },
+            {
+              "name": "theme",
+              "type": "Alpha(30)",
+              "comment": "Libellé du thème"
+            },
+            {
+              "name": "upc",
+              "type": "Num(12,0)",
+              "comment": "UPC"
+            },
+            {
+              "name": "volumeDm3",
+              "type": "Num(5,0)",
+              "comment": "Volume de la référence/coloris"
+            },
+            {
               "name": "codeTraitement",
               "type": "Alpha(1)",
-              "comment": "'T': ok, 'X': erreur"
+              "comment": "Code traitement : 'T' : traitement effectué, 'X' : anomalie/erreur"
+            },
+            {
+              "name": "dateTraitement",
+              "type": "Num(8,0)",
+              "comment": "Date du traitement sous la forme AAAAMMJJ"
+            },
+            {
+              "name": "heureTraitement",
+              "type": "Num(6,0)",
+              "comment": "Heure du traitement sous la forme HHMMSS"
             },
             {
               "name": "message",
               "type": "Alpha(250)",
               "comment": "Libellé du message"
+            }
+          ]
+        },
+        {
+          "name": "MSWREFList00PLISTERFR_SKU10Result",
+          "props": [
+            {
+              "name": "catalogue",
+              "type": "Alpha(30)",
+              "comment": "Libellé du catalogue/saison"
+            },
+            {
+              "name": "codeColorisHexa",
+              "type": "Alpha(10)",
+              "comment": "Code coloris hexadécimal"
+            },
+            {
+              "name": "codeConcept",
+              "type": "Alpha(10)",
+              "comment": "Code concept"
+            },
+            {
+              "name": "codeDescriptif1",
+              "type": "Alpha(10)",
+              "comment": "Code descriptif 1"
+            },
+            {
+              "name": "codeDescriptif2",
+              "type": "Alpha(10)",
+              "comment": "Code descriptif 2"
+            },
+            {
+              "name": "codeDescriptif3",
+              "type": "Alpha(10)",
+              "comment": "Code descriptif 3"
+            },
+            {
+              "name": "codeDescriptif4",
+              "type": "Alpha(10)",
+              "comment": "Code descriptif 4"
+            },
+            {
+              "name": "codeDescriptif5",
+              "type": "Alpha(10)",
+              "comment": "Code descriptif 5"
+            },
+            {
+              "name": "codeEtat",
+              "type": "Alpha(1)",
+              "comment": "Non suivi (N), Epuisable (E), Suivi + autres états (S)"
+            },
+            {
+              "name": "codeFournisseur",
+              "type": "Alpha(10)",
+              "comment": "Code du fournisseur principal"
+            },
+            {
+              "name": "codeGrilleTaille",
+              "type": "Alpha(10)",
+              "comment": "Code grille de taille"
+            },
+            {
+              "name": "codeMarcheSpecial",
+              "type": "Alpha(10)",
+              "comment": "Code marché spécial"
+            },
+            {
+              "name": "codeModele",
+              "type": "Alpha(10)",
+              "comment": "Code du modèle. Regroupe les références/coloris"
+            },
+            {
+              "name": "codeNomenclatureDouaniere",
+              "type": "Alpha(10)",
+              "comment": "Code nomenclature douanière"
+            },
+            {
+              "name": "codePaysOrigine",
+              "type": "Alpha(2)",
+              "comment": "Code ISO du pays d’origine"
+            },
+            {
+              "name": "codeReference",
+              "type": "Alpha(15)",
+              "comment": "Code référence/coloris"
+            },
+            {
+              "name": "codeRegimeTaxe",
+              "type": "Alpha(10)",
+              "comment": "Code regime de taxe"
+            },
+            {
+              "name": "codeSKU",
+              "type": "Alpha(18)",
+              "comment": "Code SKU"
+            },
+            {
+              "name": "codeSuivi",
+              "type": "Alpha(3)",
+              "comment": "En cours de création (CRT), A valider (AVA), Valide (VAL), Annulée (ANN), Abandonnée (ABA), Suspendue (SUS)"
+            },
+            {
+              "name": "codeTaille",
+              "type": "Alpha(5)",
+              "comment": "Taille"
+            },
+            {
+              "name": "codeTailleMaxi",
+              "type": "Alpha(5)",
+              "comment": "Taille maxi autorisée à la vente pour la référence/coloris"
+            },
+            {
+              "name": "codeTailleMini",
+              "type": "Alpha(5)",
+              "comment": "Taille mini autorisée à la vente pour la référence/coloris"
+            },
+            {
+              "name": "collectionMrq",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la collection"
+            },
+            {
+              "name": "coloris",
+              "type": "Alpha(30)",
+              "comment": "Libellé du coloris"
+            },
+            {
+              "name": "colorisTechnique",
+              "type": "Alpha(30)",
+              "comment": "Libellé du regroupement de coloris"
+            },
+            {
+              "name": "composition",
+              "type": "Alpha(60)",
+              "comment": "Composition"
+            },
+            {
+              "name": "concept",
+              "type": "Alpha(30)",
+              "comment": "Libellé du concept"
+            },
+            {
+              "name": "descriptif1",
+              "type": "Alpha(30)",
+              "comment": "Libellé descriptif 1"
+            },
+            {
+              "name": "descriptif2",
+              "type": "Alpha(30)",
+              "comment": "Libellé descriptif 2"
+            },
+            {
+              "name": "descriptif3",
+              "type": "Alpha(30)",
+              "comment": "Libellé descriptif 3"
+            },
+            {
+              "name": "descriptif4",
+              "type": "Alpha(30)",
+              "comment": "Libellé descriptif 4"
+            },
+            {
+              "name": "descriptif5",
+              "type": "Alpha(30)",
+              "comment": "Libellé descriptif 5"
+            },
+            {
+              "name": "descriptifMarketing",
+              "type": "Alpha(3000)",
+              "comment": "Descriptif marketing"
+            },
+            {
+              "name": "designationMarketing",
+              "type": "Alpha(300)",
+              "comment": "Désignation marketing"
+            },
+            {
+              "name": "designationMod",
+              "type": "Alpha(30)",
+              "comment": "Libellé du modèle"
+            },
+            {
+              "name": "designationReduite",
+              "type": "Alpha(20)",
+              "comment": "Libellé réduit de la référence/coloris"
+            },
+            {
+              "name": "designationRef",
+              "type": "Alpha(50)",
+              "comment": "Libellé de la référence/coloris"
+            },
+            {
+              "name": "empreinteCarbone",
+              "type": "Num(9,3)",
+              "comment": "Empreinte carbone de la référence/coloris"
+            },
+            {
+              "name": "familleComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la famille commerciale"
+            },
+            {
+              "name": "familleTech",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la famille technique"
+            },
+            {
+              "name": "grilleTaille",
+              "type": "Alpha(30)",
+              "comment": "Libellé grille de taille"
+            },
+            {
+              "name": "gtin",
+              "type": "Num(14,0)",
+              "comment": "EAN [unique]"
+            },
+            {
+              "name": "hauteurCm",
+              "type": "Num(5,0)",
+              "comment": "Hauteur référence /coloris"
+            },
+            {
+              "name": "idtModele",
+              "type": "Num(5,0)",
+              "comment": "Identifiant du modèle"
+            },
+            {
+              "name": "idtReference",
+              "type": "Num(7,0)",
+              "comment": "Identifiant de la référence/coloris"
+            },
+            {
+              "name": "idtSKU",
+              "type": "Num(15,0)",
+              "comment": "[key_sku]"
+            },
+            {
+              "name": "imageLarge",
+              "type": "blob",
+              "comment": "Non utilisé"
+            },
+            {
+              "name": "imageMedium",
+              "type": "blob",
+              "comment": "Non utilisé"
+            },
+            {
+              "name": "imageSmall",
+              "type": "blob",
+              "comment": "Non utilisé"
+            },
+            {
+              "name": "indiceTaille",
+              "type": "Num(2,0)",
+              "comment": "Position de la taille/pointure dans la grille"
+            },
+            {
+              "name": "largeurCm",
+              "type": "Num(5,0)",
+              "comment": "Largeur référence /coloris"
+            },
+            {
+              "name": "ligneComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la ligne commerciale"
+            },
+            {
+              "name": "ligneTech",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la ligne tecnhique"
+            },
+            {
+              "name": "longueurCm",
+              "type": "Num(5,0)",
+              "comment": "Longueur référence /coloris"
+            },
+            {
+              "name": "marcheSpecial",
+              "type": "Alpha(30)",
+              "comment": "Libellé du marché spécial"
+            },
+            {
+              "name": "marque",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la marque"
+            },
+            {
+              "name": "poidsKg",
+              "type": "Num(5,3)",
+              "comment": "Poids de la référence/coloris"
+            },
+            {
+              "name": "regimeTaxe",
+              "type": "Alpha(30)",
+              "comment": "Libellé du régime de taxe"
+            },
+            {
+              "name": "regroupementFamilleComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé regroupement famille commerciale"
+            },
+            {
+              "name": "regroupementLigneComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé regroupement ligne commerciale"
+            },
+            {
+              "name": "regroupementSsFamilleComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé regroupement sous-famille commerciale"
+            },
+            {
+              "name": "ssFamilleComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé sous- famille commerciale"
+            },
+            {
+              "name": "ssFamilleTech",
+              "type": "Alpha(30)",
+              "comment": "Libellé sous- famille technique"
+            },
+            {
+              "name": "taxeSpecifique",
+              "type": "Alpha(30)",
+              "comment": "Libellé taxe spécifique"
+            },
+            {
+              "name": "theme",
+              "type": "Alpha(30)",
+              "comment": "Libellé du thème"
+            },
+            {
+              "name": "upc",
+              "type": "Num(12,0)",
+              "comment": "UPC"
+            },
+            {
+              "name": "volumeDm3",
+              "type": "Num(5,0)",
+              "comment": "Volume de la référence/coloris"
+            },
+            {
+              "name": "codeTraitement",
+              "type": "Alpha(1)",
+              "comment": "Code traitement : 'T' : traitement effectué, 'X' : anomalie/erreur. Voir message correspondant"
+            },
+            {
+              "name": "idtReferenceTechnique",
+              "type": "Num(7,0)",
+              "comment": "Identifiant PRIOS reference technique"
+            },
+            {
+              "name": "codeReferenceTechnique",
+              "type": "Alpha(10)",
+              "comment": "Code reference technique"
+            },
+            {
+              "name": "designationReferenceTechnique",
+              "type": "Alpha(30)",
+              "comment": "Designation reference technique"
+            },
+            {
+              "name": "codeColorisParametre",
+              "type": "Alpha(10)",
+              "comment": "Code coloris (parametre)"
+            },
+            {
+              "name": "libelleAbregeColorisParametre",
+              "type": "Alpha(10)",
+              "comment": "Libellé abrégé coloris (parametre)"
+            },
+            {
+              "name": "libelleColorisParametre",
+              "type": "Alpha(30)",
+              "comment": "Libellé Code coloris (parametre)"
+            },
+            {
+              "name": "dateTraitement",
+              "type": "Num(8,0)",
+              "comment": "Date du traitement sous la forme AAAAMMJJ"
+            },
+            {
+              "name": "heureTraitement",
+              "type": "Num(6,0)",
+              "comment": "Heure du traitement sous la forme HHMMSS"
+            },
+            {
+              "name": "message",
+              "type": "Alpha(250)",
+              "comment": "Libellé du message."
             }
           ]
         },
@@ -401,7 +1098,7 @@
               "name": "idtReferenceRub",
               "type": "Num(7,0)",
               "obl": "",
-              "comment": "Identifiant référence"
+              "comment": "Identifiant de la référence/coloris (permet de faire le lien avec idtReference de la liste des SKU) "
             },
             {
               "name": "libelleComplement",
@@ -413,7 +1110,36 @@
               "name": "typeComplement",
               "type": "Alpha(10)",
               "obl": "",
-              "comment": "A: texte, E: html, S: simple, L: liste..."
+              "comment": "Texte multiligne (A), html (E), Texte Simple (S), liste simple (L), Liste choix multiple (M), Numérique (N), Date (D)"
+            }
+          ]
+        },
+        {
+          "name": "MSWREFList0PLISTELOOK_REF12Result",
+          "props": [
+            {
+              "name": "codeLook",
+              "type": "Alpha(10)",
+              "obl": "",
+              "comment": "Non utilisé"
+            },
+            {
+              "name": "idtLook ",
+              "type": "Num(5,0)",
+              "obl": "",
+              "comment": "Identifiant du look"
+            },
+            {
+              "name": "idtReferenceLook ",
+              "type": "Num(7,0)",
+              "obl": "",
+              "comment": "Identifiant de la référence/coloris (permet de faire le lien avec idtReference de la liste des SKU) "
+            },
+            {
+              "name": "libelleLook ",
+              "type": "Alpha(30)",
+              "obl": "",
+              "comment": "Libellé du look"
             }
           ]
         }
