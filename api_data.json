@@ -57,7 +57,7 @@
             "2": "Il faut renseigner le code ou l'identifiant de la langue.",
             "3": "Il faut renseigner le code ou l'identifiant du référencement."
           },
-          "returns_type": "Liste de MSWREFList00PLISTERFR_SKU08Result"      
+          "returns_type": "Liste de MSWREFList00PLISTERFR_SKU08Result"
         },
         {
           "name": "referencement_b2c_sku_avec_complements",
@@ -130,70 +130,266 @@
           ]
         },
         {
-          "name": "referencement_b2c_prix",
-          "description": "Récupérer les prix de vente 'actifs' consommateur.",
+          "name": "referencement_b2c_sku_avec_complements_par_page",
+          "description": "Récupérer les SKU des références attachées à un référencement [Soit par le contenu du filtre précisé, soit par les références présentes] avec les compléments du PIM et les looks (assortiments) et gestion de la pagination.",
           "params": [
             {
               "name": "codeSociete",
               "type": "Alpha(10)",
               "obl": "X",
-              "comment": "Code société"
+              "obl_note": "1",
+              "comment": "Code Société"
             },
             {
               "name": "idtSociete",
               "type": "Num(5,0)",
               "obl": "X",
-              "comment": "Identifiant Prios société"
+              "obl_note": "1",
+              "comment": "Identifiant Prios société (forcer à 0 si code utilisé)"
             },
             {
-              "name": "codeTiersPDV",
+              "name": "codeLangue",
               "type": "Alpha(10)",
               "obl": "X",
-              "comment": "Code du tiers point de vente"
+              "obl_note": "2",
+              "comment": "Code langue"
             },
             {
-              "name": "numTiersPDV",
-              "type": "Num(7,0)",
+              "name": "idtLangue",
+              "type": "Num(5,0)",
               "obl": "X",
-              "comment": "Identifiant Prios du tiers point de vente"
-            },
-            {
-              "name": "codeReference",
-              "type": "Alpha(15)",
-              "obl": "X",
-              "comment": "Code référence/coloris"
-            },
-            {
-              "name": "IdtReferencePx",
-              "type": "Num(7,0)",
-              "obl": "X",
-              "comment": "Identifiant Prios référence/coloris"
-            },
-            {
-              "name": "codeModele",
-              "type": "Alpha(10)",
-              "obl": "X",
-              "comment": "Code du modèle"
-            },
-            {
-              "name": "idtModelePx",
-              "type": "Num(7,0)",
-              "obl": "X",
-              "comment": "Identifiant Prios du modèle"
+              "obl_note": "2",
+              "comment": "Identifiant Prios langue (forcer à 0 si code utilisé)"
             },
             {
               "name": "codeReferencement",
               "type": "Alpha(10)",
               "obl": "X",
+              "obl_note": "3",
               "comment": "Code du référencement"
             },
             {
               "name": "idtReferencement",
               "type": "Num(5,0)",
               "obl": "X",
-              "comment": "Identifiant Prios référencement"
+              "obl_note": "3",
+              "comment": "Identifiant Prios référencement (forcer à 0 si code utilisé)"
+            },
+            {
+              "name": "numeroPage",
+              "type": "Num(3,0)",
+              "obl": "X",
+              "comment": "Numéro de la page à récupérer. Si 0, alors cela renvoie tous les SKU sans gestion de pagination"
+            },
+            {
+              "name": "x100EnregParPage ",
+              "type": "Num(1,0)",
+              "obl": "X",
+              "comment": "Nombre de lot de 100 de références/coloris à récupérer (si 0, alors aucun SKU ne sera envoyé) "
             }
           ],
+          "notes": {
+            "1": "Il faut renseigner le code ou l'identifiant de la société.",
+            "2": "Il faut renseigner le code ou l'identifiant de la langue.",
+            "3": "Il faut renseigner le code ou l'identifiant du référencement."
+          },
+          "returns_type": [
+            {
+              "label": "Liste des SKU & Références",
+              "type": "Liste de MSWREFList00PLISTERFR_SKU1400PLISTERFR_SKU14Result",
+              "comment": "Données principales des articles et déclinaisons SKU."
+            },
+            {
+              "label": "Compléments PIM / Rubriques",
+              "type": "Liste de MSWREFListPLISTERUBRIQUE_15PLISTERUBRIQUE_15Result",
+              "comment": "Champs dynamiques et descriptifs additionnels (liés par idtReferenceRub)."
+            },
+            {
+              "label": "Looks & Assortiments",
+              "type": "Liste de MSWREFList0PLISTELOOK_REF160PLISTELOOK_REF16Result",
+              "comment": "Associations de looks / silhouettes (liés par idtReferenceLook)."
+            }
+          ]
+        },
+        {
+          "name": "referencement_b2c_sku_demande_avec_complements",
+          "description": "Récupérer les SKU d’une référence (ou d’un modèle) attachée à un référencement avec les compléments du PIM et les looks (assortiments).",
+          "params": [
+            {
+              "name": "codeSociete",
+              "type": "Alpha(10)",
+              "obl": "X",
+              "obl_note": "1",
+              "comment": "Code Société"
+            },
+            {
+              "name": "idtSociete",
+              "type": "Num(5,0)",
+              "obl": "X",
+              "obl_note": "1",
+              "comment": "Identifiant Prios société (forcer à 0 si code utilisé)"
+            },
+            {
+              "name": "codeLangue",
+              "type": "Alpha(10)",
+              "obl": "X",
+              "obl_note": "2",
+              "comment": "Code langue"
+            },
+            {
+              "name": "idtLangue",
+              "type": "Num(5,0)",
+              "obl": "X",
+              "obl_note": "2",
+              "comment": "Identifiant Prios langue (forcer à 0 si code utilisé)"
+            },
+            {
+              "name": "codeReferencement",
+              "type": "Alpha(10)",
+              "obl": "X",
+              "obl_note": "3",
+              "comment": "Code du référencement"
+            },
+            {
+              "name": "idtReferencement",
+              "type": "Num(5,0)",
+              "obl": "X",
+              "obl_note": "3",
+              "comment": "Identifiant Prios référencement (forcer à 0 si code utilisé)"
+            },
+            {
+              "name": "codeReference",
+              "type": "Alpha(15)",
+              "obl": "X",
+              "obl_note": "4",
+              "comment": "Code référence/coloris"
+            },
+            {
+              "name": "idtReference",
+              "type": "Num(7,0)",
+              "obl": "X",
+              "obl_note": "4",
+              "comment": "Identifiant référence/coloris (forcer à 0 si code utilisé) "
+            },
+            {
+              "name": "codeModele",
+              "type": "Alpha(10)",
+              "obl": "X",
+              "obl_note": "4",
+              "comment": "Code du modèle"
+            },
+            {
+              "name": "idtModele",
+              "type": "Num(7,0)",
+              "obl": "X",
+              "obl_note": "4",
+              "comment": "Identifiant du modèle (forcer à 0 si code utilisé)"
+            }
+          ],
+          "notes": {
+            "1": "Il faut renseigner le code ou l'identifiant de la société.",
+            "2": "Il faut renseigner le code ou l'identifiant de la langue.",
+            "3": "Il faut renseigner le code ou l'identifiant du référencement.",
+            "4": "Il faut renseigner le code référence ou l’identifiant référence ou le code modèle ou l’identifiant modèle."
+          },
+          "returns_type": [
+            {
+              "label": "Liste des SKU & Références",
+              "type": "Liste de MSWREFList00PLISTERFR_SKU1700PLISTERFR_SKU17Result",
+              "comment": "Données principales des articles et déclinaisons SKU."
+            },
+            {
+              "label": "Compléments PIM / Rubriques",
+              "type": "Liste de MSWREFListPLISTERUBRIQUE_18PLISTERUBRIQUE_18Result",
+              "comment": "Champs dynamiques et descriptifs additionnels (liés par idtReferenceRub)."
+            },
+            {
+              "label": "Looks & Assortiments",
+              "type": "Liste de MSWREFList0PLISTELOOK_REF190PLISTELOOK_REF19Result",
+              "comment": "Associations de looks / silhouettes (liés par idtReferenceLook)."
+            }
+          ]
+        },
+        {
+          "name": "referencement_b2c_prix",
+          "description": "Récupérer les prix de vente ‘actifs’ consommateur [Soit pour une référence, soit pour les références d’un modèle, soit pour le référencement complet]. Le prix actif pour une référence étant celui en cours le plus récent par rapport à la date de la demande.",
+          "params": [
+            {
+              "name": "codeSociete",
+              "type": "Alpha(10)",
+              "obl": "X",
+              "obl_note": "1",
+              "comment": "Code société"
+            },
+            {
+              "name": "idtSociete",
+              "type": "Num(5,0)",
+              "obl": "X",
+              "obl_note": "1",
+              "comment": "Identifiant Prios société (forcer à 0 si code utilisé)."
+            },
+            {
+              "name": "codeTiersPDV",
+              "type": "Alpha(10)",
+              "obl": "X",
+              "obl_note": "2",
+              "comment": "Code du tiers point de vente"
+            },
+            {
+              "name": "numTiersPDV",
+              "type": "Num(7,0)",
+              "obl": "X",
+              "obl_note": "2",
+              "comment": "Identifiant Prios du tiers point de vente (forcer à 0 si code utilisé)."
+            },
+            {
+              "name": "codeReference",
+              "type": "Alpha(15)",
+              "obl": "X",
+              "obl_note": "3",
+              "comment": "Code référence/coloris"
+            },
+            {
+              "name": "IdtReferencePx",
+              "type": "Num(7,0)",
+              "obl": "X",
+              "obl_note": "3",
+              "comment": "Identifiant Prios référence/coloris (forcer à 0 si code utilisé)."
+            },
+            {
+              "name": "codeModele",
+              "type": "Alpha(10)",
+              "obl": "X",
+              "obl_note": "3",
+              "comment": "Code du modèle"
+            },
+            {
+              "name": "idtModelePx",
+              "type": "Num(7,0)",
+              "obl": "X",
+              "obl_note": "3",
+              "comment": "Identifiant Prios du modèle (forcer à 0 si code utilisé)."
+            },
+            {
+              "name": "codeReferencement",
+              "type": "Alpha(10)",
+              "obl": "X",
+              "obl_note": "3",
+              "comment": "Code du référencement"
+            },
+            {
+              "name": "idtReferencement",
+              "type": "Num(5,0)",
+              "obl": "X",
+              "obl_note": "3",
+              "comment": "Identifiant Prios référencement (forcer à 0 si code utilisé)."
+            }
+          ],
+          "notes": {
+            "1": "Il faut renseigner le code ou l'identifiant de la société.",
+            "2": "Il faut renseigner le code ou l'identifiant de la langue.",
+            "3": "Il faut renseigner le code du référencement ou l’identifiant du référencement ou le code référence ou l’identifiant référence ou le code modèle ou l’identifiant modèle."
+          },
           "returns_type": "Liste de MSWREFList00000PLISTEPRIX09Result",
           "returns_props": [
             {
@@ -240,70 +436,85 @@
         },
         {
           "name": "referencement_b2c_prix_avec_date",
-          "description": "Récupérer les prix de vente 'actifs' et 'à venir' consommateur.",
+          "description": "Récupérer les prix de vente ‘actifs’ et ‘à venir’ consommateur [Soit pour une référence, soit pour les références d’un modèle, soit pour le référencement complet]. Cela permet de récupérer les prix en cours actifs ainsi que ceux à venir par rapport à la date de la demande.",
           "params": [
             {
               "name": "codeSociete",
               "type": "Alpha(10)",
               "obl": "X",
+              "obl_note": "1",
               "comment": "Code société"
             },
             {
               "name": "idtSociete",
               "type": "Num(5,0)",
               "obl": "X",
-              "comment": "Identifiant Prios société"
+              "obl_note": "1",
+              "comment": "Identifiant Prios société (forcer à 0 si code utilisé)."
             },
             {
               "name": "codeTiersPDV",
               "type": "Alpha(10)",
               "obl": "X",
+              "obl_note": "2",
               "comment": "Code du tiers point de vente"
             },
             {
               "name": "numTiersPDV",
               "type": "Num(7,0)",
               "obl": "X",
-              "comment": "Identifiant Prios du tiers point de vente"
+              "obl_note": "2",
+              "comment": "Identifiant Prios du tiers point de vente (forcer à 0 si code utilisé)."
             },
             {
               "name": "codeReference",
               "type": "Alpha(15)",
               "obl": "X",
+              "obl_note": "3",
               "comment": "Code référence/coloris"
             },
             {
               "name": "IdtReferencePx",
               "type": "Num(7,0)",
               "obl": "X",
-              "comment": "Identifiant Prios référence/coloris"
+              "obl_note": "3",
+              "comment": "Identifiant Prios référence/coloris (forcer à 0 si code utilisé)."
             },
             {
               "name": "codeModele",
               "type": "Alpha(10)",
               "obl": "X",
+              "obl_note": "3",
               "comment": "Code du modèle"
             },
             {
               "name": "idtModelePx",
               "type": "Num(7,0)",
               "obl": "X",
-              "comment": "Identifiant Prios du modèle"
+              "obl_note": "3",
+              "comment": "Identifiant Prios du modèle (forcer à 0 si code utilisé)."
             },
             {
               "name": "codeReferencement",
               "type": "Alpha(10)",
               "obl": "X",
+              "obl_note": "3",
               "comment": "Code du référencement"
             },
             {
               "name": "idtReferencement",
               "type": "Num(5,0)",
               "obl": "X",
-              "comment": "Identifiant Prios référencement"
+              "obl_note": "3",
+              "comment": "Identifiant Prios référencement (forcer à 0 si code utilisé)."
             }
           ],
-          "returns_type": "Liste de MSWREFList0PLISTEPRIXDATE13Result",
+          "notes": {
+            "1": "Il faut renseigner le code ou l'identifiant de la société.",
+            "2": "Il faut renseigner le code ou l'identifiant de la langue.",
+            "3": "Il faut renseigner le code du référencement ou l’identifiant du référencement ou le code référence ou l’identifiant référence ou le code modèle ou l’identifiant modèle."
+          },
+          "returns_type": "Liste de MSWREFList0PLISTEPRIXDATE130PLISTEPRIXDATE13Result",
           "returns_props": [
             {
               "name": "codeDevise",
@@ -1054,36 +1265,6 @@
               "comment": "Code traitement : 'T' : traitement effectué, 'X' : anomalie/erreur. Voir message correspondant"
             },
             {
-              "name": "idtReferenceTechnique",
-              "type": "Num(7,0)",
-              "comment": "Identifiant PRIOS reference technique"
-            },
-            {
-              "name": "codeReferenceTechnique",
-              "type": "Alpha(10)",
-              "comment": "Code reference technique"
-            },
-            {
-              "name": "designationReferenceTechnique",
-              "type": "Alpha(30)",
-              "comment": "Designation reference technique"
-            },
-            {
-              "name": "codeColorisParametre",
-              "type": "Alpha(10)",
-              "comment": "Code coloris (parametre)"
-            },
-            {
-              "name": "libelleAbregeColorisParametre",
-              "type": "Alpha(10)",
-              "comment": "Libellé abrégé coloris (parametre)"
-            },
-            {
-              "name": "libelleColorisParametre",
-              "type": "Alpha(30)",
-              "comment": "Libellé Code coloris (parametre)"
-            },
-            {
               "name": "dateTraitement",
               "type": "Num(8,0)",
               "comment": "Date du traitement sous la forme AAAAMMJJ"
@@ -1155,6 +1336,1077 @@
               "type": "Alpha(30)",
               "obl": "",
               "comment": "Libellé du look"
+            }
+          ]
+        },
+        {
+          "name": "MSWREFList00PLISTERFR_SKU1400PLISTERFR_SKU14Result",
+          "props": [
+            {
+              "name": "catalogue",
+              "type": "Alpha(30)",
+              "comment": "Libellé du catalogue/saison"
+            },
+            {
+              "name": "codeColorisHexa",
+              "type": "Alpha(10)",
+              "comment": "Code coloris hexadécimal"
+            },
+            {
+              "name": "codeConcept",
+              "type": "Alpha(10)",
+              "comment": "Code concept"
+            },
+            {
+              "name": "codeDescriptif1",
+              "type": "Alpha(10)",
+              "comment": "Code descriptif 1"
+            },
+            {
+              "name": "codeDescriptif2",
+              "type": "Alpha(10)",
+              "comment": "Code descriptif 2"
+            },
+            {
+              "name": "codeDescriptif3",
+              "type": "Alpha(10)",
+              "comment": "Code descriptif 3"
+            },
+            {
+              "name": "codeDescriptif4",
+              "type": "Alpha(10)",
+              "comment": "Code descriptif 4"
+            },
+            {
+              "name": "codeDescriptif5",
+              "type": "Alpha(10)",
+              "comment": "Code descriptif 5"
+            },
+            {
+              "name": "codeEtat",
+              "type": "Alpha(1)",
+              "comment": "Non suivi (N), Epuisable (E), Suivi + autres états (S)"
+            },
+            {
+              "name": "codeFournisseur",
+              "type": "Alpha(10)",
+              "comment": "Code du fournisseur principal"
+            },
+            {
+              "name": "codeGrilleTaille",
+              "type": "Alpha(10)",
+              "comment": "Code grille de taille"
+            },
+            {
+              "name": "codeMarcheSpecial",
+              "type": "Alpha(10)",
+              "comment": "Code marché spécial"
+            },
+            {
+              "name": "codeModele",
+              "type": "Alpha(10)",
+              "comment": "Code du modèle. Regroupe les références/coloris"
+            },
+            {
+              "name": "codeNomenclatureDouaniere",
+              "type": "Alpha(10)",
+              "comment": "Code nomenclature douanière"
+            },
+            {
+              "name": "codePaysOrigine",
+              "type": "Alpha(2)",
+              "comment": "Code ISO du pays d’origine"
+            },
+            {
+              "name": "codeReference",
+              "type": "Alpha(15)",
+              "comment": "Code référence/coloris"
+            },
+            {
+              "name": "codeRegimeTaxe",
+              "type": "Alpha(10)",
+              "comment": "Code regime de taxe"
+            },
+            {
+              "name": "codeSKU",
+              "type": "Alpha(18)",
+              "comment": "Code SKU"
+            },
+            {
+              "name": "codeSuivi",
+              "type": "Alpha(3)",
+              "comment": "En cours de création (CRT), A valider (AVA), Valide (VAL), Annulée (ANN), Abandonnée (ABA), Suspendue (SUS)"
+            },
+            {
+              "name": "codeTaille",
+              "type": "Alpha(5)",
+              "comment": "Taille"
+            },
+            {
+              "name": "codeTailleMaxi",
+              "type": "Alpha(5)",
+              "comment": "Taille maxi autorisée à la vente pour la référence/coloris"
+            },
+            {
+              "name": "codeTailleMini",
+              "type": "Alpha(5)",
+              "comment": "Taille mini autorisée à la vente pour la référence/coloris"
+            },
+            {
+              "name": "collectionMrq",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la collection"
+            },
+            {
+              "name": "coloris",
+              "type": "Alpha(30)",
+              "comment": "Libellé du coloris"
+            },
+            {
+              "name": "composition",
+              "type": "Alpha(60)",
+              "comment": "Composition"
+            },
+            {
+              "name": "concept",
+              "type": "Alpha(30)",
+              "comment": "Libellé du concept"
+            },
+            {
+              "name": "descriptif1",
+              "type": "Alpha(30)",
+              "comment": "Libellé descriptif 1"
+            },
+            {
+              "name": "descriptif2",
+              "type": "Alpha(30)",
+              "comment": "Libellé descriptif 2"
+            },
+            {
+              "name": "descriptif3",
+              "type": "Alpha(30)",
+              "comment": "Libellé descriptif 3"
+            },
+            {
+              "name": "descriptif4",
+              "type": "Alpha(30)",
+              "comment": "Libellé descriptif 4"
+            },
+            {
+              "name": "descriptif5",
+              "type": "Alpha(30)",
+              "comment": "Libellé descriptif 5"
+            },
+            {
+              "name": "descriptifMarketing",
+              "type": "Alpha(3000)",
+              "comment": "Descriptif marketing"
+            },
+            {
+              "name": "designationMarketing",
+              "type": "Alpha(300)",
+              "comment": "Désignation marketing"
+            },
+            {
+              "name": "designationMod",
+              "type": "Alpha(30)",
+              "comment": "Libellé du modèle"
+            },
+            {
+              "name": "designationReduite",
+              "type": "Alpha(20)",
+              "comment": "Libellé réduit de la référence/coloris"
+            },
+            {
+              "name": "designationRef",
+              "type": "Alpha(50)",
+              "comment": "Libellé de la référence/coloris"
+            },
+            {
+              "name": "empreinteCarbone",
+              "type": "Num(9,3)",
+              "comment": "Empreinte carbone de la référence/coloris"
+            },
+            {
+              "name": "familleComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la famille commerciale"
+            },
+            {
+              "name": "familleTech",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la famille technique"
+            },
+            {
+              "name": "grilleTaille",
+              "type": "Alpha(30)",
+              "comment": "Libellé grille de taille"
+            },
+            {
+              "name": "gtin",
+              "type": "Num(14,0)",
+              "comment": "EAN [unique]"
+            },
+            {
+              "name": "hauteurCm",
+              "type": "Num(5,0)",
+              "comment": "Hauteur référence /coloris"
+            },
+            {
+              "name": "idtModele",
+              "type": "Num(5,0)",
+              "comment": "Identifiant du modèle"
+            },
+            {
+              "name": "idtReference",
+              "type": "Num(7,0)",
+              "comment": "Identifiant de la référence/coloris"
+            },
+            {
+              "name": "idtSKU",
+              "type": "Num(15,0)",
+              "comment": "[key_sku]"
+            },
+            {
+              "name": "imageLarge",
+              "type": "blob",
+              "comment": "Non utilisé"
+            },
+            {
+              "name": "imageMedium",
+              "type": "blob",
+              "comment": "Non utilisé"
+            },
+            {
+              "name": "imageSmall",
+              "type": "blob",
+              "comment": "Non utilisé"
+            },
+            {
+              "name": "indiceTaille",
+              "type": "Num(2,0)",
+              "comment": "Position de la taille/pointure dans la grille"
+            },
+            {
+              "name": "largeurCm",
+              "type": "Num(5,0)",
+              "comment": "Largeur référence /coloris"
+            },
+            {
+              "name": "ligneComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la ligne commerciale"
+            },
+            {
+              "name": "ligneTech",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la ligne tecnhique"
+            },
+            {
+              "name": "longueurCm",
+              "type": "Num(5,0)",
+              "comment": "Longueur référence /coloris"
+            },
+            {
+              "name": "marcheSpecial",
+              "type": "Alpha(30)",
+              "comment": "Libellé du marché spécial"
+            },
+            {
+              "name": "marque",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la marque"
+            },
+            {
+              "name": "poidsKg",
+              "type": "Num(5,3)",
+              "comment": "Poids de la référence/coloris"
+            },
+            {
+              "name": "regimeTaxe",
+              "type": "Alpha(30)",
+              "comment": "Libellé du régime de taxe"
+            },
+            {
+              "name": "regroupementFamilleComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé regroupement famille commerciale"
+            },
+            {
+              "name": "regroupementLigneComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé regroupement ligne commerciale"
+            },
+            {
+              "name": "regroupementSsFamilleComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé regroupement sous-famille commerciale"
+            },
+            {
+              "name": "ssFamilleComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé sous- famille commerciale"
+            },
+            {
+              "name": "ssFamilleTech",
+              "type": "Alpha(30)",
+              "comment": "Libellé sous- famille technique"
+            },
+            {
+              "name": "taxeSpecifique",
+              "type": "Alpha(30)",
+              "comment": "Libellé taxe spécifique"
+            },
+            {
+              "name": "theme",
+              "type": "Alpha(30)",
+              "comment": "Libellé du thème"
+            },
+            {
+              "name": "upc",
+              "type": "Num(12,0)",
+              "comment": "UPC"
+            },
+            {
+              "name": "volumeDm3",
+              "type": "Num(5,0)",
+              "comment": "Volume de la référence/coloris"
+            },
+            {
+              "name": "codeTraitement",
+              "type": "Alpha(1)",
+              "comment": "Code traitement : 'T' : traitement effectué, 'X' : anomalie/erreur. Voir message correspondant"
+            },
+            {
+              "name": "dateTraitement",
+              "type": "Num(8,0)",
+              "comment": "Date du traitement sous la forme AAAAMMJJ"
+            },
+            {
+              "name": "heureTraitement",
+              "type": "Num(6,0)",
+              "comment": "Heure du traitement sous la forme HHMMSS"
+            },
+            {
+              "name": "message",
+              "type": "Alpha(250)",
+              "comment": "Libellé du message."
+            }
+          ]
+        },
+        {
+          "name": "MSWREFListPLISTERUBRIQUE_15PLISTERUBRIQUE_15Result",
+          "props": [
+            {
+              "name": "codeRubrique",
+              "type": "Alpha(10)",
+              "obl": "",
+              "comment": "Code du complement"
+            },
+            {
+              "name": "idtReferenceRub",
+              "type": "Num(7,0)",
+              "obl": "",
+              "comment": "Identifiant de la référence/coloris (permet de faire le lien avec idtReference de la liste des SKU) "
+            },
+            {
+              "name": "libelleComplement",
+              "type": "Alpha(30000)",
+              "obl": "",
+              "comment": "Valeur"
+            },
+            {
+              "name": "typeComplement",
+              "type": "Alpha(10)",
+              "obl": "",
+              "comment": "Texte multiligne (A), html (E), Texte Simple (S), liste simple (L), Liste choix multiple (M), Numérique (N), Date (D)"
+            }
+          ]
+        },
+        {
+          "name": "MSWREFList0PLISTELOOK_REF160PLISTELOOK_REF16Result",
+          "props": [
+            {
+              "name": "codeLook",
+              "type": "Alpha(10)",
+              "obl": "",
+              "comment": "Non utilisé"
+            },
+            {
+              "name": "idtLook ",
+              "type": "Num(5,0)",
+              "obl": "",
+              "comment": "Identifiant du look"
+            },
+            {
+              "name": "idtReferenceLook ",
+              "type": "Num(7,0)",
+              "obl": "",
+              "comment": "Identifiant de la référence/coloris (permet de faire le lien avec idtReference de la liste des SKU) "
+            },
+            {
+              "name": "libelleLook ",
+              "type": "Alpha(30)",
+              "obl": "",
+              "comment": "Libellé du look"
+            }
+          ]
+        },
+        {
+          "name": "MSWREFList00PLISTERFR_SKU1700PLISTERFR_SKU17Result",
+          "props": [
+            {
+              "name": "catalogue",
+              "type": "Alpha(30)",
+              "comment": "Libellé du catalogue/saison"
+            },
+            {
+              "name": "codeColorisHexa",
+              "type": "Alpha(10)",
+              "comment": "Code coloris hexadécimal"
+            },
+            {
+              "name": "codeConcept",
+              "type": "Alpha(10)",
+              "comment": "Code concept"
+            },
+            {
+              "name": "codeDescriptif1",
+              "type": "Alpha(10)",
+              "comment": "Code descriptif 1"
+            },
+            {
+              "name": "codeDescriptif2",
+              "type": "Alpha(10)",
+              "comment": "Code descriptif 2"
+            },
+            {
+              "name": "codeDescriptif3",
+              "type": "Alpha(10)",
+              "comment": "Code descriptif 3"
+            },
+            {
+              "name": "codeDescriptif4",
+              "type": "Alpha(10)",
+              "comment": "Code descriptif 4"
+            },
+            {
+              "name": "codeDescriptif5",
+              "type": "Alpha(10)",
+              "comment": "Code descriptif 5"
+            },
+            {
+              "name": "codeEtat",
+              "type": "Alpha(1)",
+              "comment": "Non suivi (N), Epuisable (E), Suivi + autres états (S)"
+            },
+            {
+              "name": "codeFournisseur",
+              "type": "Alpha(10)",
+              "comment": "Code du fournisseur principal"
+            },
+            {
+              "name": "codeGrilleTaille",
+              "type": "Alpha(10)",
+              "comment": "Code grille de taille"
+            },
+            {
+              "name": "codeMarcheSpecial",
+              "type": "Alpha(10)",
+              "comment": "Code marché spécial"
+            },
+            {
+              "name": "codeModele",
+              "type": "Alpha(10)",
+              "comment": "Code du modèle. Regroupe les références/coloris"
+            },
+            {
+              "name": "codeNomenclatureDouaniere",
+              "type": "Alpha(10)",
+              "comment": "Code nomenclature douanière"
+            },
+            {
+              "name": "codePaysOrigine",
+              "type": "Alpha(2)",
+              "comment": "Code ISO du pays d’origine"
+            },
+            {
+              "name": "codeReference",
+              "type": "Alpha(15)",
+              "comment": "Code référence/coloris"
+            },
+            {
+              "name": "codeRegimeTaxe",
+              "type": "Alpha(10)",
+              "comment": "Code regime de taxe"
+            },
+            {
+              "name": "codeSKU",
+              "type": "Alpha(18)",
+              "comment": "Code SKU"
+            },
+            {
+              "name": "codeSuivi",
+              "type": "Alpha(3)",
+              "comment": "En cours de création (CRT), A valider (AVA), Valide (VAL), Annulée (ANN), Abandonnée (ABA), Suspendue (SUS)"
+            },
+            {
+              "name": "codeTaille",
+              "type": "Alpha(5)",
+              "comment": "Taille"
+            },
+            {
+              "name": "codeTailleMaxi",
+              "type": "Alpha(5)",
+              "comment": "Taille maxi autorisée à la vente pour la référence/coloris"
+            },
+            {
+              "name": "codeTailleMini",
+              "type": "Alpha(5)",
+              "comment": "Taille mini autorisée à la vente pour la référence/coloris"
+            },
+            {
+              "name": "collectionMrq",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la collection"
+            },
+            {
+              "name": "coloris",
+              "type": "Alpha(30)",
+              "comment": "Libellé du coloris"
+            },
+            {
+              "name": "composition",
+              "type": "Alpha(60)",
+              "comment": "Composition"
+            },
+            {
+              "name": "concept",
+              "type": "Alpha(30)",
+              "comment": "Libellé du concept"
+            },
+            {
+              "name": "descriptif1",
+              "type": "Alpha(30)",
+              "comment": "Libellé descriptif 1"
+            },
+            {
+              "name": "descriptif2",
+              "type": "Alpha(30)",
+              "comment": "Libellé descriptif 2"
+            },
+            {
+              "name": "descriptif3",
+              "type": "Alpha(30)",
+              "comment": "Libellé descriptif 3"
+            },
+            {
+              "name": "descriptif4",
+              "type": "Alpha(30)",
+              "comment": "Libellé descriptif 4"
+            },
+            {
+              "name": "descriptif5",
+              "type": "Alpha(30)",
+              "comment": "Libellé descriptif 5"
+            },
+            {
+              "name": "descriptifMarketing",
+              "type": "Alpha(3000)",
+              "comment": "Descriptif marketing"
+            },
+            {
+              "name": "designationMarketing",
+              "type": "Alpha(300)",
+              "comment": "Désignation marketing"
+            },
+            {
+              "name": "designationMod",
+              "type": "Alpha(30)",
+              "comment": "Libellé du modèle"
+            },
+            {
+              "name": "designationReduite",
+              "type": "Alpha(20)",
+              "comment": "Libellé réduit de la référence/coloris"
+            },
+            {
+              "name": "designationRef",
+              "type": "Alpha(50)",
+              "comment": "Libellé de la référence/coloris"
+            },
+            {
+              "name": "empreinteCarbone",
+              "type": "Num(9,3)",
+              "comment": "Empreinte carbone de la référence/coloris"
+            },
+            {
+              "name": "familleComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la famille commerciale"
+            },
+            {
+              "name": "familleTech",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la famille technique"
+            },
+            {
+              "name": "grilleTaille",
+              "type": "Alpha(30)",
+              "comment": "Libellé grille de taille"
+            },
+            {
+              "name": "gtin",
+              "type": "Num(14,0)",
+              "comment": "EAN [unique]"
+            },
+            {
+              "name": "hauteurCm",
+              "type": "Num(5,0)",
+              "comment": "Hauteur référence /coloris"
+            },
+            {
+              "name": "idtModele",
+              "type": "Num(5,0)",
+              "comment": "Identifiant du modèle"
+            },
+            {
+              "name": "idtReference",
+              "type": "Num(7,0)",
+              "comment": "Identifiant de la référence/coloris"
+            },
+            {
+              "name": "idtSKU",
+              "type": "Num(15,0)",
+              "comment": "[key_sku]"
+            },
+            {
+              "name": "imageLarge",
+              "type": "blob",
+              "comment": "Non utilisé"
+            },
+            {
+              "name": "imageMedium",
+              "type": "blob",
+              "comment": "Non utilisé"
+            },
+            {
+              "name": "imageSmall",
+              "type": "blob",
+              "comment": "Non utilisé"
+            },
+            {
+              "name": "indiceTaille",
+              "type": "Num(2,0)",
+              "comment": "Position de la taille/pointure dans la grille"
+            },
+            {
+              "name": "largeurCm",
+              "type": "Num(5,0)",
+              "comment": "Largeur référence /coloris"
+            },
+            {
+              "name": "ligneComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la ligne commerciale"
+            },
+            {
+              "name": "ligneTech",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la ligne tecnhique"
+            },
+            {
+              "name": "longueurCm",
+              "type": "Num(5,0)",
+              "comment": "Longueur référence /coloris"
+            },
+            {
+              "name": "marcheSpecial",
+              "type": "Alpha(30)",
+              "comment": "Libellé du marché spécial"
+            },
+            {
+              "name": "marque",
+              "type": "Alpha(30)",
+              "comment": "Libellé de la marque"
+            },
+            {
+              "name": "poidsKg",
+              "type": "Num(5,3)",
+              "comment": "Poids de la référence/coloris"
+            },
+            {
+              "name": "regimeTaxe",
+              "type": "Alpha(30)",
+              "comment": "Libellé du régime de taxe"
+            },
+            {
+              "name": "regroupementFamilleComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé regroupement famille commerciale"
+            },
+            {
+              "name": "regroupementLigneComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé regroupement ligne commerciale"
+            },
+            {
+              "name": "regroupementSsFamilleComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé regroupement sous-famille commerciale"
+            },
+            {
+              "name": "ssFamilleComm",
+              "type": "Alpha(30)",
+              "comment": "Libellé sous- famille commerciale"
+            },
+            {
+              "name": "ssFamilleTech",
+              "type": "Alpha(30)",
+              "comment": "Libellé sous- famille technique"
+            },
+            {
+              "name": "taxeSpecifique",
+              "type": "Alpha(30)",
+              "comment": "Libellé taxe spécifique"
+            },
+            {
+              "name": "theme",
+              "type": "Alpha(30)",
+              "comment": "Libellé du thème"
+            },
+            {
+              "name": "upc",
+              "type": "Num(12,0)",
+              "comment": "UPC"
+            },
+            {
+              "name": "volumeDm3",
+              "type": "Num(5,0)",
+              "comment": "Volume de la référence/coloris"
+            },
+            {
+              "name": "codeTraitement",
+              "type": "Alpha(1)",
+              "comment": "Code traitement : 'T' : traitement effectué, 'X' : anomalie/erreur. Voir message correspondant"
+            },
+            {
+              "name": "dateTraitement",
+              "type": "Num(8,0)",
+              "comment": "Date du traitement sous la forme AAAAMMJJ"
+            },
+            {
+              "name": "heureTraitement",
+              "type": "Num(6,0)",
+              "comment": "Heure du traitement sous la forme HHMMSS"
+            },
+            {
+              "name": "message",
+              "type": "Alpha(250)",
+              "comment": "Libellé du message."
+            }
+          ]
+        },
+        {
+          "name": "MSWREFListPLISTERUBRIQUE_18PLISTERUBRIQUE_18Result",
+          "props": [
+            {
+              "name": "codeRubrique",
+              "type": "Alpha(10)",
+              "obl": "",
+              "comment": "Code du complement"
+            },
+            {
+              "name": "idtReferenceRub",
+              "type": "Num(7,0)",
+              "obl": "",
+              "comment": "Identifiant de la référence/coloris (permet de faire le lien avec idtReference de la liste des SKU) "
+            },
+            {
+              "name": "libelleComplement",
+              "type": "Alpha(30000)",
+              "obl": "",
+              "comment": "Valeur"
+            },
+            {
+              "name": "typeComplement",
+              "type": "Alpha(10)",
+              "obl": "",
+              "comment": "Texte multiligne (A), html (E), Texte Simple (S), liste simple (L), Liste choix multiple (M), Numérique (N), Date (D)"
+            }
+          ]
+        },
+        {
+          "name": "MSWREFList0PLISTELOOK_REF190PLISTELOOK_REF19Result",
+          "props": [
+            {
+              "name": "codeLook",
+              "type": "Alpha(10)",
+              "obl": "",
+              "comment": "Non utilisé"
+            },
+            {
+              "name": "idtLook ",
+              "type": "Num(5,0)",
+              "obl": "",
+              "comment": "Identifiant du look"
+            },
+            {
+              "name": "idtReferenceLook ",
+              "type": "Num(7,0)",
+              "obl": "",
+              "comment": "Identifiant de la référence/coloris (permet de faire le lien avec idtReference de la liste des SKU) "
+            },
+            {
+              "name": "libelleLook ",
+              "type": "Alpha(30)",
+              "obl": "",
+              "comment": "Libellé du look"
+            }
+          ]
+        },
+        {
+          "name": "MSWREFList00000PLISTEPRIX09Result",
+          "props": [
+            {
+              "name": "codeDevise",
+              "type": "Alpha(3)",
+              "comment": "Code devise (‘EUR’, ‘USD’ …)"
+            },
+            {
+              "name": "codeSKU",
+              "type": "Alpha(18)",
+              "comment": "Code SKU"
+            },
+            {
+              "name": "codeTaille",
+              "type": "Alpha(5)",
+              "comment": "Taille"
+            },
+            {
+              "name": "codeUPC",
+              "type": "Num(12,0)",
+              "comment": "UPC"
+            },
+            {
+              "name": "dontTaxe",
+              "type": "Num(13,2)",
+              "comment": "Non utilisé"
+            },
+            {
+              "name": "idtModele",
+              "type": "Num(7,0)",
+              "comment": "Non utilisé"
+            },
+            {
+              "name": "idtReference",
+              "type": "Num(7,0)",
+              "comment": "Identifiant de la référence/coloris"
+            },
+            {
+              "name": "idtSKU",
+              "type": "Num(15,0)",
+              "comment": "[key_sku]"
+            },
+            {
+              "name": "indicetaille",
+              "type": "Num(2,0)",
+              "comment": "Position de la taille/pointure dans la grille"
+            },
+            {
+              "name": "numGTIN",
+              "type": "Num(14,0)",
+              "comment": "EAN [unique]"
+            },
+            {
+              "name": "numTarif",
+              "type": "Num(14,0)",
+              "comment": "Numéro Prios du tarif"
+            },
+            {
+              "name": "prixHtDistrib",
+              "type": "Num(13,2)",
+              "comment": "Non utilisé"
+            },
+            {
+              "name": "prixPromo",
+              "type": "Num(13,2)",
+              "comment": "Prix net T.T.C. (à afficher)"
+            },
+            {
+              "name": "prixVente",
+              "type": "Num(13,2)",
+              "comment": "Prix brut T.T.C. (à barrer si différent du prixPromo)"
+            },
+            {
+              "name": "codeTraitement",
+              "type": "Alpha(1)",
+              "comment": "Code traitement : ‘T’ : traitement effectué, ‘X’ : anomalie/erreur. Voir message correspondant"
+            },
+            {
+              "name": "dateTraitement",
+              "type": "Num(8,0)",
+              "comment": "Date du traitement sous la forme AAAAMMJJ"
+            },
+            {
+              "name": "heureTraitement",
+              "type": "Num(6,0)",
+              "comment": "Heure du traitement sous la forme HHMMSS"
+            },
+            {
+              "name": "message",
+              "type": "Alpha(250)",
+              "comment": "Libellé du message."
+            }
+          ]
+        },
+        {
+          "name": "MSWREFList0PLISTEPRIXDATE130PLISTEPRIXDATE13Result",
+          "props": [
+            {
+              "name": "codeDevise",
+              "type": "Alpha(3)",
+              "comment": "Code devise (‘EUR’, ‘USD’ …)"
+            },
+            {
+              "name": "codeSKU",
+              "type": "Alpha(18)",
+              "comment": "Code SKU"
+            },
+            {
+              "name": "codeTaille",
+              "type": "Alpha(5)",
+              "comment": "Taille"
+            },
+            {
+              "name": "codeUPC",
+              "type": "Num(12,0)",
+              "comment": "UPC"
+            },
+            {
+              "name": "dateDebut",
+              "type": "Num(8,0)",
+              "comment": "Date de début d’application du tarif au format AAAAMMJJ"
+            },
+            {
+              "name": "dateFin",
+              "type": "Num(8,0)",
+              "comment": "Date de fin d’application du tarif au format AAAAMMJJ (peut-être égale à 0 si pas de date de fin précisée)."
+            },
+            {
+              "name": "dontTaxe",
+              "type": "Num(13,2)",
+              "comment": "Non utilisé"
+            },
+            {
+              "name": "heureDebut",
+              "type": "Num(6,0)",
+              "comment": "= 0"
+            },
+            {
+              "name": "heureFin",
+              "type": "Num(6,0)",
+              "comment": "= 0 si date de fin = 0 et 235959 si date de fin > 0"
+            },
+            {
+              "name": "idtModele",
+              "type": "Num(7,0)",
+              "comment": "Non utilisé"
+            },
+            {
+              "name": "idtReference",
+              "type": "Num(7,0)",
+              "comment": "Identifiant de la référence/coloris"
+            },
+            {
+              "name": "idtSKU",
+              "type": "Num(15,0)",
+              "comment": "[key_sku]"
+            },
+            {
+              "name": "indicetaille",
+              "type": "Num(2,0)",
+              "comment": "Position de la taille/pointure dans la grille"
+            },
+            {
+              "name": "numGTIN",
+              "type": "Num(14,0)",
+              "comment": "EAN [unique]"
+            },
+            {
+              "name": "numTarif",
+              "type": "Num(14,0)",
+              "comment": "Numéro Prios du tarif"
+            },
+            {
+              "name": "percentPromo",
+              "type": "Num(5,2)",
+              "comment": "Valeur de la promotion"
+            },
+            {
+              "name": "prixHtDistrib",
+              "type": "Num(13,2)",
+              "comment": "Non utilisé"
+            },
+            {
+              "name": "prixPromo",
+              "type": "Num(13,2)",
+              "comment": "Prix net T.T.C. (à afficher)"
+            },
+            {
+              "name": "prixVente",
+              "type": "Num(13,2)",
+              "comment": "Prix brut T.T.C. (à barrer si différent du prixPromo)"
+            },
+            {
+              "name": "valeurPromo",
+              "type": "Num(7,2)",
+              "comment": "Pourcentage de la promotion"
+            },
+            {
+              "name": "codeTypeTarif",
+              "type": "Alpha(1)",
+              "comment": "Type de tarif (E (Evenement), C (Ctalaogue), R (Référencement), P (permanent))"
+            },
+            {
+              "name": "codeTarif",
+              "type": "Alpha(10)",
+              "comment": "Code du tarif"
+            },
+            {
+              "name": "libelleTarif",
+              "type": "Alpha(30)",
+              "comment": "Libellé du tarif"
+            },
+            {
+              "name": "codeValeurTypeTarif",
+              "type": "Alpha(10)",
+              "comment": "Code de la valeur du Type de Tarif"
+            },
+            {
+              "name": "libelleValeurTypeTarif",
+              "type": "Alpha(30)",
+              "comment": "Valeur du Type de Tarif"
+            },
+            {
+              "name": "codeTraitement",
+              "type": "Alpha(1)",
+              "comment": "Code traitement : ‘T’ : traitement effectué. ‘X’ : anomalie/erreur. Voir message correspondant"
+            },
+            {
+              "name": "dateTraitement",
+              "type": "Num(8,0)",
+              "comment": "Date du traitement sous la forme AAAAMMJJ"
+            },
+            {
+              "name": "heureTraitement",
+              "type": "Num(6,0)",
+              "comment": "Heure du traitement sous la forme HHMMSS"
+            },
+            {
+              "name": "message",
+              "type": "Alpha(250)",
+              "comment": "Libellé du message."
             }
           ]
         }
