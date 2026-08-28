@@ -1,32 +1,55 @@
+/* style.css */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f8f9fa;
 }
 
+/* --- Barre latérale gauche --- */
 .sidebar {
     height: 100vh;
     overflow-y: auto;
     background-color: #212529;
-    color: white;
-    padding: 20px;
+    color: #e9ecef;
+    padding: 20px 15px;
     position: fixed;
     width: 320px;
     z-index: 1000;
 }
 
-    .sidebar a {
-        color: #adb5bd;
-        text-decoration: none;
-        display: block;
-        margin-bottom: 8px;
-        font-size: 0.95em;
+    .sidebar h4 {
+        color: #ffffff;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-left: 5px;
     }
 
-        .sidebar a:hover {
-            color: #fff;
-            text-decoration: underline;
-        }
+    .sidebar h6 {
+        letter-spacing: 0.5px;
+        font-size: 0.75rem;
+    }
 
+/* Liens du menu latéral */
+.sidebar-link {
+    color: #adb5bd;
+    text-decoration: none;
+    display: block;
+    padding: 6px 10px;
+    margin-bottom: 3px;
+    font-size: 0.88rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+    .sidebar-link:hover {
+        color: #ffffff;
+        background-color: rgba(255, 255, 255, 0.1);
+        text-decoration: none;
+    }
+
+/* --- Contenu principal --- */
 .content {
     margin-left: 320px;
     padding: 30px;
@@ -34,20 +57,21 @@ body {
 
 .card {
     margin-bottom: 30px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    border: 2px solid transparent;
-    transition: border-color 0.5s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    border: 1px solid #dee2e6;
+    transition: border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
     .card.highlight {
-        border-color: #0d6efd;
-        box-shadow: 0 0 15px rgba(13, 110, 253, 0.3);
+        border-color: #0d6efd !important;
+        box-shadow: 0 0 12px rgba(13, 110, 253, 0.35) !important;
     }
 
+/* Liens des types de données */
 .type-link {
     cursor: pointer;
     color: #0d6efd;
-    font-weight: bold;
+    font-weight: 600;
     text-decoration: none;
 }
 
@@ -55,11 +79,7 @@ body {
         text-decoration: underline;
     }
 
-h2 {
-    color: #343a40;
-    margin-top: 40px;
-}
-
+/* --- Onglets figés --- */
 .sticky-tabs-container {
     position: sticky;
     top: 0;
@@ -75,33 +95,14 @@ h2 {
     border-bottom: none;
 }
 
-.nav-tabs .nav-link {
-    color: #495057;
-    font-weight: 500;
-    border: none;
-}
+    .nav-tabs .nav-link {
+        color: #495057;
+        font-weight: 500;
+        border: none;
+    }
 
-.nav-tabs .nav-link.active {
-    color: #0d6efd;
-    border-bottom: 3px solid #0d6efd;
-    background-color: transparent;
-}
-
-.multi-returns-container .card {
-    border-left: 4px solid #0d6efd !important;
-    margin-bottom: 12px;
-}
-
-.multi-returns-container .table-responsive::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-
-.multi-returns-container .table-responsive::-webkit-scrollbar-thumb {
-    background-color: #adb5bd;
-    border-radius: 4px;
-}
-
-.multi-returns-container .table-responsive::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
+        .nav-tabs .nav-link.active {
+            color: #0d6efd;
+            border-bottom: 3px solid #0d6efd;
+            background-color: transparent;
+        }
