@@ -1,24 +1,28 @@
-Contexte du projet : J'ai migré une documentation de services web SOAP (provenant d'un PDF de 200 pages) dans une application web interactive HTML/CSS/JS pour faciliter la lecture et la navigation.
+# Documentation Web API Prios E - Contexte du Projet
 
-Fichiers actuels du projet :
-- index.html : Structure de la page (onglets, sidebar, modale).
-- style.css : Fichier CSS externalisé regroupant tous les styles et mises en page.
-- app.js : Fichier JavaScript contenant toute la logique interactive (chargement dynamique du JSON, génération des tableaux, gestion des liens hypertextes, recherche des dépendances, et initialisation des infobulles).
-- api_data.json : Fichier de données structuré regroupant les services, méthodes, types de données et notes contextuelles.
+## 1. Objectif du Projet
+Migration d'une documentation technique SOAP historique (initialement un PDF de 200 pages) vers une application web interactive, moderne et ergonomique pour faciliter la lecture, le test et la navigation des prestataires et équipes internes.
 
-Outils utilisés :
-- Versioning : GitHub.
-- Éditeur : Visual Studio / Visual Studio Code.
-- Test local : Serveur web local propulsé par Python.
-- Framework UI : Bootstrap 5 (via CDN) pour le design, les onglets et les infobulles (tooltips).
+## 2. Architecture des Fichiers du Projet
+- **index.html** : Structure de la page web (intégration Bootstrap, conteneurs principaux pour les onglets, la barre latérale et la modale).
+- **style.css** : Feuille de style externalisée regroupant la mise en page (menu latéral fixe, design des cartes, effets de surbrillance/highlight, scrollbars personnalisées).
+- **app.js** : Cœur logique de l'application (chargement dynamique du JSON, construction automatique des composants DOM, fonctions `linkify`, navigation fluide avec compensation de hauteur, recherche d'impact et initialisation des tooltips).
+- **api_data.json** : Base de données technique structurée en services, domaines, méthodes (avec paramètres, notes contextuelles et retours simples ou multi-listes) et types de données.
 
-Ce qui est déjà réalisé :
-- Navigation globale : Mise en place en haut d'un menu d'onglets figé (sticky) pour naviguer entre les grands domaines de l'API.
-- Menu latéral dynamique : Affichage à droite d'un menu listant toutes les méthodes et types de données de la section active.
-- Affichage central dynamique : Génération automatique des fiches méthodes et structures de données.
-- Maillage hypertextuel (Linkify) : Les types référencés dans les paramètres ou retours se transforment en liens cliquables pour naviguer instantanément vers leur définition.
-- Analyse d'impact ("Où est-ce utilisé ?") : Bouton interactif sur les types ouvrant une popup listant toutes les méthodes et structures dépendantes.
-- Gestion ergonomique des champs obligatoires et des notes : 
-  - Ajout d'exposants numérotés dans la colonne obligatoire liés à des notes contextuelles.
-  - Intégration d'infobulles (tooltips Bootstrap) au survol de la souris sur les exposants.
-  - Affichage automatique des notes contextuelles sous forme de liste récapitulative juste en dessous du tableau des paramètres de la méthode.
+## 3. Stack Technique et Outils
+- **Frontend UI** : Bootstrap 5 (via CDN) pour le système de grille, les onglets, les cartes et les infobulles (*tooltips*).
+- **Logique** : JavaScript Vanilla (ES6+).
+- **Éditeur de code** : Visual Studio / Visual Studio Code.
+- **Environnement de test** : Serveur web local (Python `http.server`).
+- **Versioning** : Git / GitHub.
+
+## 4. Fonctionnalités et Ergonomie Développées
+- **Navigation par onglets (Sticky)** : Un menu supérieur figé pour basculer entre les grands domaines fonctionnels de l'API (Référence, Stock, Commande, Tiers, Supply Chain, Ventes, Offres, CRM, Cross-canal, Annexe).
+- **Menu latéral dynamique** : Actualisation en temps réel de la liste des méthodes et des structures de données de la section active.
+- **Maillage hypertextuel intelligent (`linkify`)** : Détection automatique des types métiers dans les paramètres ou les retours pour générer des liens cliquables vers leur définition exacte.
+- **Analyse d'impact croisée ("Où est-ce utilisé ?")** : Popup contextuelle listant de manière exhaustive toutes les méthodes (paramètres/retours) et types imbriqués dépendant d'une structure donnée.
+- **Gestion des champs obligatoires et Notes contextuelles** :
+  - Affichage d'exposants numérotés liés aux contraintes d'obligation.
+  - Infobulles interactives (*tooltips* Bootstrap) au survol de la souris.
+  - Rendu visuel d'un bloc récapitulatif des notes directement sous le tableau des paramètres de la méthode.
+- **Support des retours multi-listes** : Affichage structuré sous forme de cartes dédiées pour les méthodes retournant plusieurs flux distincts simultanément (ex: `referencement_b2c_sku_avec_complements`).
