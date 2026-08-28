@@ -8,40 +8,35 @@
  * 3. Maillage hypertexte automatique des types de données (linkify).
  * 4. Gestion des notes contextuelles et des infobulles interactives (tooltips).
  * 5. Moteur d'analyse d'impact croisé ("Où est-ce utilisé ?").
- * 6. Navigation fluide avec compensation de l'en-tête fixe et mise en surbrillance.
+ * 6. Navigation fluide avec compensation de l'en-tête fixe et surbrillance.
  */
 
-// Stockage global en mémoire des données de l'API
+// Stockage global des données de l'API
 let apiData = {};
 
 // ====================================================================
-// 1. CHARGEMENT DES DONNÉES
+// 1. CHARGEMENT ASYNCHRONE DES DONNÉES (FETCH)
 // ====================================================================
-
-// Récupération asynchrone du fichier de données JSON
 fetch('api_data.json')
     .then(response => {
-        // Vérification de la réponse HTTP
         if (!response.ok) {
             throw new Error("Erreur HTTP " + response.status + " : impossible de récupérer api_data.json");
         }
         return response.json();
     })
     .then(data => {
-        // Enregistrement des données dans la variable globale
         apiData = data;
 
-        // Mise à jour de la date de version dans le bandeau supérieur
+        // Mise à jour de la date dans le bandeau supérieur
         const docDateEl = document.getElementById('doc-date');
         if (docDateEl) {
             docDateEl.textContent = apiData.doc_date || "Non spécifiée";
         }
 
-        // Lancement de la construction de l'interface
+        // Lancement de la construction de la page
         render();
     })
     .catch(error => {
-        // Gestion et affichage des erreurs de chargement ou de parsing JSON
         console.error("Erreur critique lors du chargement des données :", error);
 
         const docDateEl = document.getElementById('doc-date');
@@ -65,10 +60,7 @@ fetch('api_data.json')
 // ====================================================================
 
 /**
- * Échappe les caractères HTML réservés afin de prévenir les injections XSS
- * et éviter de casser la structure du DOM lors de l'affichage de chevrons ou d'apostrophes.
- * @param {string} unsafe - Chaîne brute à sécuriser.
- * @returns {string} Chaîne sécurisée.
+ * Sécurise les textes HTML pour éviter les failles XSS et les erreurs de chevrons.
  */
 function escapeHtml(unsafe) {
     return (unsafe || '')
@@ -81,13 +73,10 @@ function escapeHtml(unsafe) {
 }
 
 /**
- * Extrait le nom brut d'un type de données en retirant les structures d'emballage
- * (par exemple: "List<ClientExterne>" devient "ClientExterne").
- * @param {string} typeStr - Type brut déclaré.
- * @returns {string} Nom normalisé du type.
+ * Extrait le nom propre d'un type (ex: "Liste de MSW..." -> "MSW...").
  */
 function cleanTypeName(typeStr) {
-    if (!typeStr) return "";
+    if (!typeStr || typeof typeStr !== 'string') return "";
     return typeStr
         .replace(/^List</, '')
         .replace(/^Liste de /, '')
@@ -97,13 +86,10 @@ function cleanTypeName(typeStr) {
 }
 
 /**
- * Analyse une chaîne de type et la transforme en lien hypertexte cliquable
- * si le type correspondant existe dans le dictionnaire des données.
- * @param {string} typeStr - Nom ou signature du type.
- * @returns {string} Balise HTML <a> ou texte brut échappé.
+ * Transforme le nom d'un type en lien cliquable s'il est répertorié dans la documentation.
  */
 function linkify(typeStr) {
-    if (!typeStr) return "";
+    if (!typeStr || typeof typeStr !== 'string') return "";
 
     const cleanType = cleanTypeName(typeStr);
     const escapedType = escapeHtml(typeStr);
@@ -111,7 +97,6 @@ function linkify(typeStr) {
     let exists = false;
     let targetTab = '';
 
-    // Parcours des services pour vérifier si le type est défini dans la documentation
     if (apiData.services && Array.isArray(apiData.services)) {
         for (let i = 0; i < apiData.services.length; i++) {
             const currentService = apiData.services[i];
@@ -123,7 +108,6 @@ function linkify(typeStr) {
         }
     }
 
-    // Si le type existe, on encapsule son occurrence dans un lien de navigation directe
     if (exists) {
         const cleanTypeEscaped = escapeHtml(cleanType);
         const linkHtml = `<a class="type-link" href="javascript:void(0)" onclick="navigateTo('${targetTab}', 'type-${cleanTypeEscaped}')">${cleanTypeEscaped}</a>`;
@@ -134,18 +118,15 @@ function linkify(typeStr) {
 }
 
 /**
- * Initialise l'ensemble des infobulles Bootstrap (Tooltips) présentes dans la page.
- * Détruit les instances préexistantes pour éviter les fuites de mémoire.
+ * Initialise l'ensemble des infobulles Bootstrap (Tooltips) de la page.
  */
 function initTooltips() {
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     tooltipTriggerList.forEach(tooltipTriggerEl => {
-        // Nettoyage d'une éventuelle instance résiduelle
         const existingInstance = bootstrap.Tooltip.getInstance(tooltipTriggerEl);
         if (existingInstance) {
             existingInstance.dispose();
         }
-        // Création de l'infobulle avec délai d'affichage fluide
         new bootstrap.Tooltip(tooltipTriggerEl, {
             delay: { show: 150, hide: 100 }
         });
@@ -153,13 +134,8 @@ function initTooltips() {
 }
 
 // ====================================================================
-// 3. GÉNÉRATION PRINCIPALE DE L'INTERFACE (render)
+// 3. GÉNÉRATION DE L'INTERFACE (render)
 // ====================================================================
-
-/**
- * Construit dynamiquement l'intégralité des onglets de navigation,
- * des panneaux de contenu, des tables de paramètres et de types.
- */
 function render() {
     const tabsNav = document.getElementById('mainTabs');
     const tabsContent = document.getElementById('mainTabsContent');
@@ -169,12 +145,11 @@ function render() {
     let tabsHtml = '';
     let contentHtml = '';
 
-    // Parcours de chaque grand domaine de services
     apiData.services.forEach((service, index) => {
         const isActive = index === 0 ? 'active' : '';
         const isShow = index === 0 ? 'show active' : '';
 
-        // --- A. Boutons d'onglets supérieurs ---
+        // --- A. Onglets supérieurs ---
         tabsHtml += `
             <li class="nav-item" role="presentation">
                 <button class="nav-link ${isActive}" 
@@ -189,7 +164,7 @@ function render() {
             </li>
         `;
 
-        // --- B. Contenu de la section active ---
+        // --- B. Panneaux de contenu ---
         let serviceContent = '';
         const hasMethods = service.methods && service.methods.length > 0;
         const hasTypes = service.types && service.types.length > 0;
@@ -197,7 +172,7 @@ function render() {
         if (!hasMethods && !hasTypes) {
             serviceContent = `<div class="alert alert-secondary">Aucune méthode ou structure de données répertoriée dans cette section.</div>`;
         } else {
-            // --- B.1. Génération des Méthodes ---
+            // --- B.1. Méthodes ---
             if (hasMethods) {
                 serviceContent += `<h2 class="mb-4 pb-2 border-bottom">Méthodes</h2>`;
 
@@ -211,7 +186,7 @@ function render() {
                                 <p class="card-text text-muted">${escapeHtml(m.description || 'Aucune description disponible.')}</p>
                     `;
 
-                    // Tableau des paramètres entrants
+                    // Tableau des paramètres
                     if (m.params && m.params.length > 0) {
                         serviceContent += `
                             <h6 class="mt-4 mb-2 text-secondary fw-bold text-uppercase small">Paramètres :</h6>
@@ -227,7 +202,6 @@ function render() {
                                     </thead>
                                     <tbody>
                                         ${m.params.map(p => {
-                            // Traitement de l'indicateur d'obligation et de l'exposant avec infobulle
                             let oblContent = escapeHtml(p.obl || '');
                             if (p.obl_note) {
                                 const noteText = (m.notes && m.notes[p.obl_note])
@@ -254,41 +228,147 @@ function render() {
                                 </table>
                             </div>
                         `;
+
+                        // Notes sous les paramètres
+                        if (m.notes && Object.keys(m.notes).length > 0) {
+                            serviceContent += `
+                                <div class="p-2 mt-2 mb-3 bg-light border rounded text-muted small">
+                                    <strong class="d-block mb-1 text-dark">Notes :</strong>
+                                    <ul class="mb-0 ps-3">
+                                        ${Object.entries(m.notes).map(([key, val]) => `
+                                            <li><strong>(${escapeHtml(key)})</strong> : ${escapeHtml(val)}</li>
+                                        `).join('')}
+                                    </ul>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        serviceContent += `<p class="text-muted mb-3"><em>Aucun paramètre entrant.</em></p>`;
                     }
 
-                    // Affichage des notes contextuelles de la méthode
-                    if (m.notes && Object.keys(m.notes).length > 0) {
-                        serviceContent += `
-                            <div class="p-2 mt-2 mb-3 bg-light border rounded text-muted small">
-                                <strong class="d-block mb-1 text-dark">Notes :</strong>
-                                <ul class="mb-0 ps-3">
-                                    ${Object.entries(m.notes).map(([key, val]) => `
-                                        <li><strong>(${escapeHtml(key)})</strong> : ${escapeHtml(val)}</li>
-                                    `).join('')}
-                                </ul>
-                            </div>
-                        `;
+                    // Section Retour (Gestion Retours Multiples ou Simples)
+                    serviceContent += `<h6 class="text-secondary fw-bold text-uppercase small mt-3">Retourne :</h6>`;
+
+                    const multiReturns = Array.isArray(m.returns_types) ? m.returns_types : (Array.isArray(m.returns_type) ? m.returns_type : null);
+
+                    if (multiReturns && multiReturns.length > 0) {
+                        serviceContent += `<div class="multi-returns-container mb-3">`;
+                        multiReturns.forEach(retItem => {
+                            const cleanType = cleanTypeName(retItem.type);
+                            let matchedType = null;
+
+                            for (let s of apiData.services) {
+                                if (s.types) {
+                                    matchedType = s.types.find(t => t.name === cleanType);
+                                    if (matchedType) break;
+                                }
+                            }
+
+                            serviceContent += `
+                            <div class="card border-primary-subtle mb-3 shadow-sm">
+                                <div class="card-header bg-light-subtle d-flex justify-content-between align-items-center py-2">
+                                    <span class="fw-semibold text-primary">
+                                        ${escapeHtml(retItem.label || 'Liste')} : ${linkify(retItem.type)}
+                                    </span>
+                                    ${retItem.comment ? `<small class="text-muted">${escapeHtml(retItem.comment)}</small>` : ''}
+                                </div>
+                                ${matchedType ? `
+                                <div class="card-body p-0">
+                                    <div class="table-responsive" style="max-height: 260px; overflow-y: auto;">
+                                        <table class="table table-sm table-hover table-bordered mb-0 align-middle">
+                                            <thead class="table-light sticky-top">
+                                                <tr>
+                                                    <th class="ps-3 w-25">Propriété</th>
+                                                    <th>Type</th>
+                                                    <th class="text-center">Obl.</th>
+                                                    <th>Commentaires</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${matchedType.props.map(p => `
+                                                    <tr>
+                                                        <td class="ps-3"><code>${escapeHtml(p.name)}</code></td>
+                                                        <td>${linkify(p.type)}</td>
+                                                        <td class="text-center text-danger fw-bold">${escapeHtml(p.obl || '')}</td>
+                                                        <td>${escapeHtml(p.comment || '')}</td>
+                                                    </tr>`).join('')}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>` : ''}
+                            </div>`;
+                        });
+                        serviceContent += `</div>`;
+                    } else {
+                        const returnTypeRaw = m.returns || m.returns_type;
+                        if (typeof returnTypeRaw === 'string') {
+                            const cleanRetType = cleanTypeName(returnTypeRaw);
+                            let matchedType = null;
+
+                            for (let s of apiData.services) {
+                                if (s.types) {
+                                    matchedType = s.types.find(t => t.name === cleanRetType);
+                                    if (matchedType) break;
+                                }
+                            }
+
+                            if (matchedType) {
+                                serviceContent += `
+                                    <div class="alert alert-light border">
+                                        <strong>Type de retour : </strong> ${linkify(returnTypeRaw)}<br><br>
+                                        <table class="table table-sm table-bordered bg-white mb-0 align-middle">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th class="w-25">Propriété</th>
+                                                    <th>Type</th>
+                                                    <th class="text-center">Obl.</th>
+                                                    <th>Commentaires</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${matchedType.props.map(p => `
+                                                    <tr>
+                                                        <td><code>${escapeHtml(p.name)}</code></td>
+                                                        <td>${linkify(p.type)}</td>
+                                                        <td class="text-center text-danger fw-bold">${escapeHtml(p.obl || '')}</td>
+                                                        <td>${escapeHtml(p.comment || '')}</td>
+                                                    </tr>`).join('')}
+                                            </tbody>
+                                        </table>
+                                    </div>`;
+                            } else if (m.returns_props && m.returns_props.length > 0) {
+                                serviceContent += `
+                                    <div class="alert alert-light border">
+                                        <strong>Type de retour : </strong> ${linkify(m.returns_type || 'Objet détaillé')}<br><br>
+                                        <table class="table table-sm table-bordered bg-white mb-0 align-middle">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th class="w-25">Propriété</th>
+                                                    <th>Type</th>
+                                                    <th>Commentaires</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${m.returns_props.map(p => `
+                                                    <tr>
+                                                        <td><code>${escapeHtml(p.name)}</code></td>
+                                                        <td>${linkify(p.type)}</td>
+                                                        <td>${escapeHtml(p.comment || '')}</td>
+                                                    </tr>`).join('')}
+                                            </tbody>
+                                        </table>
+                                    </div>`;
+                            } else if (returnTypeRaw) {
+                                serviceContent += `<p class="fs-6">${linkify(returnTypeRaw)}</p>`;
+                            }
+                        }
                     }
 
-                    // Affichage du type de retour
-                    if (m.returns || m.returns_type) {
-                        const returnVal = m.returns_type || m.returns;
-                        serviceContent += `
-                            <div class="mt-3 pt-2 border-top small">
-                                <span class="fw-bold text-dark">Retour : </span>
-                                <span>${linkify(returnVal)}</span>
-                            </div>
-                        `;
-                    }
-
-                    serviceContent += `
-                            </div>
-                        </div>
-                    `;
+                    serviceContent += `</div></div>`;
                 });
             }
 
-            // --- B.2. Génération des Types de Données ---
+            // --- B.2. Types de Données ---
             if (hasTypes) {
                 serviceContent += `<h2 class="mt-5 mb-4 pb-2 border-bottom">Types de Données</h2>`;
 
@@ -322,8 +402,7 @@ function render() {
                                                     <td>${linkify(p.type)}</td>
                                                     <td class="text-center text-danger fw-bold">${escapeHtml(p.obl || '')}</td>
                                                     <td class="small text-secondary">${escapeHtml(p.comment || '')}</td>
-                                                </tr>
-                                            `).join('')}
+                                                </tr>`).join('')}
                                         </tbody>
                                     </table>
                                 </div>
@@ -331,7 +410,6 @@ function render() {
                         </div>
                     `;
 
-                    // Notes associées au type
                     if (t.notes && t.notes.length > 0) {
                         serviceContent += `
                             <div class="p-3 mb-4 bg-light text-muted border rounded small" style="margin-top: -15px;">
@@ -345,7 +423,6 @@ function render() {
             }
         }
 
-        // Ajout du volet au conteneur principal
         contentHtml += `
             <div class="tab-pane fade ${isShow}" id="${service.id}" role="tabpanel" aria-labelledby="${service.id}-tab">
                 ${serviceContent}
@@ -353,27 +430,19 @@ function render() {
         `;
     });
 
-    // Injection dans le document
     tabsNav.innerHTML = tabsHtml;
     tabsContent.innerHTML = contentHtml;
 
-    // Initialisation du menu latéral pour le premier onglet actif
     if (apiData.services.length > 0) {
         updateSidebar(apiData.services[0].id);
     }
 
-    // Initialisation des infobulles Bootstrap nouvellement créées
     initTooltips();
 }
 
 // ====================================================================
 // 4. MENU LATÉRAL DYNAMIQUE (Sidebar)
 // ====================================================================
-
-/**
- * Met à jour le menu de navigation latérale droite en fonction du domaine sélectionné.
- * @param {string} serviceId - Identifiant unique du service actif.
- */
 function updateSidebar(serviceId) {
     const service = apiData.services ? apiData.services.find(s => s.id === serviceId) : null;
     const sidebar = document.getElementById('sidebar-content');
@@ -387,7 +456,6 @@ function updateSidebar(serviceId) {
 
     let sbHtml = '';
 
-    // Liste des liens rapides vers les méthodes
     if (service.methods && service.methods.length > 0) {
         sbHtml += `<h6 class="text-uppercase text-muted fw-bold small mt-2 mb-2">Méthodes</h6><div class="list-group list-group-flush mb-4">`;
         service.methods.forEach(m => {
@@ -402,7 +470,6 @@ function updateSidebar(serviceId) {
         sbHtml += `</div>`;
     }
 
-    // Liste des liens rapides vers les types de données
     if (service.types && service.types.length > 0) {
         sbHtml += `<h6 class="text-uppercase text-muted fw-bold small mt-3 mb-2">Types de données</h6><div class="list-group list-group-flush mb-2">`;
         service.types.forEach(t => {
@@ -421,13 +488,8 @@ function updateSidebar(serviceId) {
 }
 
 // ====================================================================
-// 5. NAVIGATION & GESTION DU DÉFILEMENT (Scroll & Highlight)
+// 5. NAVIGATION & DÉFILEMENT FLUIDE
 // ====================================================================
-
-/**
- * Active l'onglet Bootstrap ciblé.
- * @param {string} tabId - Identifiant de l'onglet à activer.
- */
 function activateTab(tabId) {
     const tabTriggerEl = document.getElementById(tabId + '-tab');
     if (tabTriggerEl) {
@@ -437,14 +499,7 @@ function activateTab(tabId) {
     }
 }
 
-/**
- * Coordonne le changement d'onglet, le scroll animé avec compensation de l'en-tête
- * et applique un effet visuel temporaire d'illumination sur la cible.
- * @param {string} serviceId - Identifiant de l'onglet contenant la cible.
- * @param {string} elementId - ID de l'élément HTML à cibler.
- */
 function navigateTo(serviceId, elementId) {
-    // 1. Fermeture préventive de la modale si elle est actuellement ouverte
     const modalEl = document.getElementById('usageModal');
     let delay = 0;
 
@@ -452,36 +507,31 @@ function navigateTo(serviceId, elementId) {
         const modalInstance = bootstrap.Modal.getInstance(modalEl);
         if (modalInstance) {
             modalInstance.hide();
-            delay = 350; // Délai d'attente de la fin de l'animation CSS Bootstrap
+            delay = 350;
         }
     }
 
-    // 2. Déclenchement de la navigation
     setTimeout(() => {
         activateTab(serviceId);
 
-        // Petit délai pour permettre au navigateur de rendre l'onglet visible avant de calculer la position
         setTimeout(() => {
             const target = document.getElementById(elementId);
             if (target) {
-                // Calcul de la position absolue avec compensation de l'en-tête fixe (130px)
                 const headerOffset = 130;
                 const elementPosition = target.getBoundingClientRect().top;
                 const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
-                // Défilement doux vers la cible
                 window.scrollTo({
                     top: offsetPosition,
                     behavior: 'smooth'
                 });
 
-                // Application d'un effet visuel d'attention (classe CSS highlight)
-                target.classList.remove('highlight-card');
-                void target.offsetWidth; // Forçage du reflow pour réinitialiser l'animation CSS
-                target.classList.add('highlight-card');
+                target.classList.remove('highlight');
+                void target.offsetWidth;
+                target.classList.add('highlight');
 
                 setTimeout(() => {
-                    target.classList.remove('highlight-card');
+                    target.classList.remove('highlight');
                 }, 2000);
             }
         }, 100);
@@ -489,14 +539,8 @@ function navigateTo(serviceId, elementId) {
 }
 
 // ====================================================================
-// 6. TRAÇABILITÉ & ANALYSE D'IMPACT ("Où est-ce utilisé ?")
+// 6. ANALYSE D'IMPACT ("Où est-ce utilisé ?")
 // ====================================================================
-
-/**
- * Scanne l'intégralité du modèle de données (méthodes, paramètres, retours, structures imbriquées)
- * pour identifier et référencer toutes les utilisations d'un type cible dans une fenêtre modale.
- * @param {string} targetType - Nom du type recherché.
- */
 function showUsages(targetType) {
     const usages = [];
 
@@ -505,18 +549,34 @@ function showUsages(targetType) {
             // A. Analyse des méthodes
             if (service.methods) {
                 service.methods.forEach(m => {
-                    // Vérification du type de retour
-                    const ret = m.returns_type || m.returns;
-                    if (ret && cleanTypeName(ret) === targetType) {
-                        usages.push(`
-                            <li class="mb-2">
-                                <strong>${escapeHtml(service.title)}</strong> : Retourné par la méthode 
-                                <a class="type-link fw-semibold" href="javascript:void(0)" onclick="navigateTo('${service.id}', 'method-${m.name}')">${escapeHtml(m.name)}</a>
-                            </li>
-                        `);
+                    // Multi-retours
+                    const multiReturns = Array.isArray(m.returns_types) ? m.returns_types : (Array.isArray(m.returns_type) ? m.returns_type : null);
+                    if (multiReturns) {
+                        multiReturns.forEach(rt => {
+                            if (cleanTypeName(rt.type) === targetType) {
+                                usages.push(`
+                                    <li class="mb-2">
+                                        <strong>${escapeHtml(service.title)}</strong> : Retourné dans la méthode 
+                                        <a class="type-link fw-semibold" href="javascript:void(0)" onclick="navigateTo('${service.id}', 'method-${m.name}')">${escapeHtml(m.name)}</a>
+                                        (<em>${escapeHtml(rt.label || 'Liste')}</em>)
+                                    </li>
+                                `);
+                            }
+                        });
+                    } else {
+                        // Retours simples
+                        const ret = m.returns_type || m.returns;
+                        if (typeof ret === 'string' && cleanTypeName(ret) === targetType) {
+                            usages.push(`
+                                <li class="mb-2">
+                                    <strong>${escapeHtml(service.title)}</strong> : Retourné par la méthode 
+                                    <a class="type-link fw-semibold" href="javascript:void(0)" onclick="navigateTo('${service.id}', 'method-${m.name}')">${escapeHtml(m.name)}</a>
+                                </li>
+                            `);
+                        }
                     }
 
-                    // Vérification des paramètres d'entrée
+                    // Paramètres d'entrée
                     if (m.params) {
                         m.params.forEach(p => {
                             if (cleanTypeName(p.type) === targetType) {
@@ -525,25 +585,24 @@ function showUsages(targetType) {
                                         <strong>${escapeHtml(service.title)}</strong> : Paramètre <code>${escapeHtml(p.name)}</code> dans la méthode 
                                         <a class="type-link fw-semibold" href="javascript:void(0)" onclick="navigateTo('${service.id}', 'method-${m.name}')">${escapeHtml(m.name)}</a>
                                     </li>
-                                `});
+                                `);
                             }
                         });
                     }
                 });
             }
 
-            // B. Analyse des structures de données imbriquées
+            // B. Analyse des types imbriqués
             if (service.types) {
                 service.types.forEach(t => {
-                    // Éviter l'auto-référencement sur sa propre définition
                     if (t.name !== targetType && t.props) {
                         t.props.forEach(p => {
                             if (cleanTypeName(p.type) === targetType) {
                                 usages.push(`
-                                < li class="mb-2" >
-                                    <strong>${escapeHtml(service.title)}</strong> : Propriété < code > ${ escapeHtml(p.name) }</code > du type
-                                        < a class="type-link fw-semibold" href = "javascript:void(0)" onclick = "navigateTo('${service.id}', 'type-${t.name}')" > ${ escapeHtml(t.name) }</a >
-                                    </li >
+                                    <li class="mb-2">
+                                        <strong>${escapeHtml(service.title)}</strong> : Propriété <code>${escapeHtml(p.name)}</code> du type 
+                                        <a class="type-link fw-semibold" href="javascript:void(0)" onclick="navigateTo('${service.id}', 'type-${t.name}')">${escapeHtml(t.name)}</a>
+                                    </li>
                                 `);
                             }
                         });
@@ -553,25 +612,23 @@ function showUsages(targetType) {
         });
     }
 
-    // Affichage des résultats dans le corps de la modale
     const body = document.getElementById('usageModalBody');
     const title = document.getElementById('usageModalLabel');
 
-    if (title) title.textContent = `Utilisation du type: ${ targetType } `;
+    if (title) title.textContent = `Utilisation du type : ${targetType}`;
 
     if (body) {
         if (usages.length > 0) {
-            body.innerHTML = `< ul class="list-unstyled mb-0" > ${ usages.join('') }</ul > `;
+            body.innerHTML = `<ul class="list-unstyled mb-0">${usages.join('')}</ul>`;
         } else {
             body.innerHTML = `
-                                < div class="alert alert-secondary mb-0 text-center" >
-                                    Ce type de données n'est pas directement référencé en tant que dépendance.
-                </div >
-                                `;
+                <div class="alert alert-secondary mb-0 text-center">
+                    Ce type de données n'est pas directement référencé en tant que dépendance.
+                </div>
+            `;
         }
     }
 
-    // Ouverture de la modale Bootstrap
     const modalEl = document.getElementById('usageModal');
     if (modalEl) {
         const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
