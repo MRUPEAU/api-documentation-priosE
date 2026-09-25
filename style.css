@@ -144,6 +144,51 @@ body {
     display: inline-block;
 }
 
-    .btn-toggle-desc:hover {
-        text-decoration: underline;
+.btn-toggle-desc:hover {
+    text-decoration: underline;
+}
+
+/* Animation fluide du menu et du contenu */
+.sidebar {
+    transition: transform 0.3s ease;
+}
+
+.content {
+    transition: margin-left 0.3s ease;
+}
+
+/* Bouton flottant de bascule */
+.sidebar-toggle-btn {
+    position: fixed;
+    top: 15px;
+    left: 330px;
+    z-index: 1100;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    border: 1px solid #495057;
+    background-color: #212529;
+    color: #ffffff;
+    transition: left 0.3s ease, background-color 0.2s ease;
+}
+
+    .sidebar-toggle-btn:hover {
+        background-color: #343a40;
+        color: #0d6efd;
     }
+
+/* État rétracté */
+body.sidebar-collapsed .sidebar {
+    transform: translateX(-100%);
+}
+
+body.sidebar-collapsed .content {
+    margin-left: 0;
+}
+
+body.sidebar-collapsed .sidebar-toggle-btn {
+    left: 15px;
+}

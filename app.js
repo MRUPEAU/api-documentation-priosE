@@ -117,22 +117,6 @@ function linkify(typeStr) {
     return escapedType;
 }
 
-/**
- * Initialise l'ensemble des infobulles Bootstrap (Tooltips) de la page.
- */
-function initTooltips() {
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    tooltipTriggerList.forEach(tooltipTriggerEl => {
-        const existingInstance = bootstrap.Tooltip.getInstance(tooltipTriggerEl);
-        if (existingInstance) {
-            existingInstance.dispose();
-        }
-        new bootstrap.Tooltip(tooltipTriggerEl, {
-            delay: { show: 150, hide: 100 }
-        });
-    });
-}
-
 // ====================================================================
 // 3. GÉNÉRATION DE L'INTERFACE (render)
 // ====================================================================
@@ -746,3 +730,34 @@ function toggleDescription(btn) {
     const isExpanded = container.classList.contains('expanded');
     btn.textContent = isExpanded ? 'Voir moins' : 'Voir plus...';
 }
+
+// ====================================================================
+// 7. INITIALISATION DES INFOBULLES (Tooltips Bootstrap)
+// ====================================================================
+function initTooltips() {
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltipTriggerList.forEach(tooltipTriggerEl => {
+        const existingInstance = bootstrap.Tooltip.getInstance(tooltipTriggerEl);
+        if (existingInstance) {
+            existingInstance.dispose();
+        }
+        new bootstrap.Tooltip(tooltipTriggerEl, {
+            delay: { show: 150, hide: 100 }
+        });
+    });
+}
+// ====================================================================
+// 8. GESTION DE LA VISIBILITÉ DU MENU LATÉRAL
+// ====================================================================
+function toggleSidebar() {
+    document.body.classList.toggle('sidebar-collapsed');
+    const isCollapsed = document.body.classList.contains('sidebar-collapsed');
+    localStorage.setItem('prios_sidebar_collapsed', isCollapsed ? '1' : '0');
+}
+
+// Restauration automatique du choix utilisateur au chargement
+document.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('prios_sidebar_collapsed') === '1') {
+        document.body.classList.add('sidebar-collapsed');
+    }
+});

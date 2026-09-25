@@ -12,11 +12,21 @@
 
 </head>
 <body>
+    <!-- Bouton flottant pour masquer / afficher la sidebar -->
+    <button type="button"
+            id="sidebarToggleBtn"
+            class="btn btn-dark btn-sm sidebar-toggle-btn shadow-sm"
+            onclick="toggleSidebar()"
+            title="Masquer / Afficher le sommaire">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
+        </svg>
+    </button>
     <div class="sidebar">
         <h4 class="text-white mb-4">PRIOS E - Navigation</h4>
         <div id="sidebar-content"></div>
     </div>
-    
+
     <div class="content">
         <h1 class="mb-2">Documentation Interactive Web Services PRIOS E</h1>
         <p class="text-muted mb-4">Mise à jour de la documentation : <strong id="doc-date">Chargement...</strong></p>
@@ -35,16 +45,16 @@
 
     <!-- Modal -->
     <div class="modal fade" id="usageModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-          <div class="modal-header bg-primary text-white">
-            <h5 class="modal-title" id="usageModalLabel">Utilisation du type</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body" id="usageModalBody" style="font-size: 1.05em;">
-          </div>
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="usageModalLabel">Utilisation du type</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="usageModalBody" style="font-size: 1.05em;">
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
