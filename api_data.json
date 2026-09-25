@@ -2461,107 +2461,168 @@
       "methods": [
         {
           "name": "stock_a_vendre_b2c",
-          "description": "Permet la récupération des types de stock (à vendre, réservé, physique, maxi).",
+          "description": "Cette méthode permet la récupération des types de stock (à vendre à horizon maxi [V], à vendre à horizon infini [T], réservé [R], physique [P] et maxi [M]) à la référence pour chacun des SKU.",
           "params": [
             {
               "name": "codeSociete",
               "type": "Alpha(10)",
               "obl": "X",
+              "obl_note": "1",
               "comment": "Code société"
             },
             {
               "name": "idtSociete",
               "type": "Num(5,0)",
               "obl": "X",
-              "comment": "Identifiant Prios société"
+              "obl_note": "1",
+              "comment": "Identifiant Prios société (forcer à 0 si code utilisé)"
             },
             {
               "name": "codeTiersPDV",
               "type": "Alpha(10)",
               "obl": "X",
-              "comment": "Code du tiers point de vente"
+              "obl_note": "2",
+              "comment": "Code du tiers point de vente [Le PDV sert à identifier le lieu de stockage]"
             },
             {
               "name": "numTiersPDV",
               "type": "Num(7,0)",
               "obl": "X",
-              "comment": "Identifiant Prios du tiers point de vente"
+              "obl_note": "2",
+              "comment": "Identifiant Prios du tiers point de vente (forcer à 0 si code utilisé)"
             },
             {
               "name": "codeReference",
               "type": "Alpha(15)",
               "obl": "X",
+              "obl_note": "3",
               "comment": "Code référence/coloris"
             },
             {
               "name": "IdtReference",
               "type": "Num(7,0)",
               "obl": "X",
-              "comment": "Identifiant Prios référence"
+              "obl_note": "3",
+              "comment": "Identifiant Prios référence/coloris (forcer à 0 si code utilisé)"
             },
             {
               "name": "autresRefModele",
               "type": "Alpha(1)",
               "obl": "",
-              "comment": "‘O’ pour récupérer le stock sur les autres références"
+              "comment": "‘O’ pour récupérer le stock sur les autres références du modèle que la référence passée en paramètre."
             },
             {
               "name": "codeReferencement",
               "type": "Alpha(10)",
               "obl": "X",
+              "obl_note": "3",
               "comment": "Code du référencement"
             },
             {
               "name": "idtReferencement",
               "type": "Num(5,0)",
               "obl": "X",
-              "comment": "Identifiant référencement"
+              "obl_note": "3",
+              "comment": "Identifiant Prios référencement (forcer à 0 si code utilisé)"
             },
             {
               "name": "typeStock",
               "type": "Alpha(1)",
               "obl": "X",
-              "comment": "V (vendre), T (vendre infini), R (réservé), P (physique), M (maxi)"
+              "comment": "Type de stock : ‘V’ : stock à vendre à horizon maxi, ‘T’ : stock à vendre à horizon infini, ‘R’ : stock réservé, ‘P’ : stock physique, ‘M’ : stock maxi"
             },
             {
               "name": "cdePrevisionnelle",
               "type": "Alpha(1)",
               "obl": "",
-              "comment": "‘O’ pour ajout des commandes prévisionnelles"
+              "comment": "‘O’ pour ajout des commandes prévisionnelles (pris en compte pour type de stock ‘V’, ‘T’ et ‘M’)."
             }
           ],
-          "returns_type": "Liste de MSWSTKList0PLISTESTOCKSKU15Result",
-          "returns_props": [
+          "notes": {
+            "1": "Il faut renseigner le code ou l'identifiant de la société.",
+            "2": "Il faut renseigner le code ou l'identifiant du point de vente.",
+            "3": "Il faut renseigner le code ou l'identifiant du référencement ou le code ou l'identifiant référence."
+          },
+          "returns_type": "Liste de MSWSTKList0PLISTESTOCKSKU150PLISTESTOCKSKU15Result",
+          "return_behavior": "Si pas d’erreur, pour chaque SKU récupéré (via le référencement, référence ou modèle), cela renvoie le stock demandé (codeTraitement = 'T'). Un dernier élément supplémentaire est renvoyé dans la liste avec la quantité en stock totale de tous les SKU renvoyés avec codeTraitement = 'T' et message = '#INF - TOTAL unités confondues'.",
+          "errors": [
             {
-              "name": "codeSKU",
-              "type": "Alpha(18)",
-              "comment": "Code SKU"
+              "message": "#ERR - ABSENCE id. ou code société",
+              "comment": "L’identifiant et le code société ne sont pas renseignés"
             },
             {
-              "name": "codeTaille",
-              "type": "Alpha(5)",
-              "comment": "Taille"
+              "message": "#ERR - ERREUR code société XXX",
+              "comment": "Le code société n’est pas reconnu"
             },
             {
-              "name": "idtReference",
-              "type": "Num(7,0)",
-              "comment": "Identifiant de la référence/coloris"
+              "message": "#ERR - ERREUR identifiant société XXX",
+              "comment": "L’identifiant société n’est pas reconnu"
             },
             {
-              "name": "quantiteStock",
-              "type": "Num(13,4)",
-              "comment": "Quantité stock"
+              "message": "#ERR - ABSENCE id. ou code Point de vente",
+              "comment": "L’identifiant et le code point de vente ne sont pas renseignés"
             },
             {
-              "name": "typeLigne",
-              "type": "Alpha(1)",
-              "comment": "V, T, R, P, M"
+              "message": "#ERR - ERREUR code Point de vente XXX",
+              "comment": "Le code point de vente n’est pas reconnu"
+            },
+            {
+              "message": "#ERR - ERREUR Id. [N° tiers] Point de vente XXX",
+              "comment": "L’identifiant point de vente n’est pas reconnu"
+            },
+            {
+              "message": "#ERR - ERREUR Point de vente non reconnu dans une filière valide XXX",
+              "comment": "Le point de vente avec identifiant XXX n’est associé à aucune filière valide"
+            },
+            {
+              "message": "#ERR - ERREUR lieu stock non associé au Point de vente XXX",
+              "comment": "Le point de vente avec identifiant XXX n’est associé à aucun lieu de stock"
+            },
+            {
+              "message": "#ERR - Tiers de type lieu de stock non trouvé pour l'identifiant XXX",
+              "comment": "Le lieu de stock avec identifiant XXX n’est pas reconnu en tant que lieu"
+            },
+            {
+              "message": "#ERR - ABSENCE id. ou code référence",
+              "comment": "L’identifiant et le code du référencement ainsi que l’identifiant et code de la référence ne sont pas renseignés"
+            },
+            {
+              "message": "#ERR - ERREUR code reference XXX",
+              "comment": "Le code référence n’est pas reconnu"
+            },
+            {
+              "message": "#ERR - ERREUR identifiant reference XXX",
+              "comment": "L’identifiant référence n’est pas reconnu"
+            },
+            {
+              "message": "#ERR - ABSENCE id. ou code référencement",
+              "comment": "L’identifiant et le code du référencement ne sont pas renseignés"
+            },
+            {
+              "message": "#ERR - ERREUR code référencement XXX",
+              "comment": "Le code du référencement n’est pas reconnu"
+            },
+            {
+              "message": "#ERR - ERREUR identifiant référencement XXX",
+              "comment": "L’identifiant du référencement n’est pas reconnu"
+            },
+            {
+              "message": "#ERR - Référencement INACTIF XXX",
+              "comment": "Le référencement est inactif (par rapport aux dates de début/fin du référencement)"
+            },
+            {
+              "message": "#ERR - CDE Prévisionnelle - Filière inexistante au Point de vente",
+              "comment": "Aucune filière valide pour le point de vente avec identifiant XXX"
+            },
+            {
+              "message": "#ERR - Aucun sku trouvé avec l'identifiant XXX",
+              "comment": "Aucun SKU trouvé pour identifiant référence XXX"
             }
           ]
         },
         {
           "name": "expose_stock_lieu",
-          "description": "Permet la récupération de stock sur entrepôt ou points de vente.",
+          "description": "Cette méthode permet la récupération de stock sur entrepôt ou points de vente. Préconisation : il est fortement conseillé d’interroger les stocks tiers par tiers (un seul tiers dans la liste pNumTiers) dans un souci d’optimisation des performances.",
           "params": [
             {
               "name": "socId",
@@ -2573,44 +2634,645 @@
               "name": "pNumtiers",
               "type": "Num(7,0)",
               "obl": "X",
-              "comment": "Liste des numéros de tiers Prios (PDV ou entrepôt)"
+              "obl_note": "1",
+              "comment": "A insérer dans liste [listetiersId] - Liste des numéros de tiers Prios correspondant au point de vente ou entrepôt."
             },
             {
               "name": "physiquePointdeVente",
               "type": "Alpha(1)",
               "obl": "X",
+              "obl_note": "1",
               "comment": "(O/N) Stock physique du point de vente"
             },
             {
               "name": "disponibleEntrepot",
               "type": "Alpha(1)",
               "obl": "X",
+              "obl_note": "1",
               "comment": "(O/N) Stock disponible entrepôt"
             },
             {
               "name": "stockazero",
               "type": "Alpha(1)",
               "obl": "X",
-              "comment": "(O/N) Pour récupérer les SKU sans stock"
+              "comment": "(O/N) Pour récupérer les SKU sans stock [avec un stock à 0]"
             },
             {
               "name": "stockavendre",
               "type": "Alpha(1)",
               "obl": "",
-              "comment": "(O/N) Pour récupérer le stock à vendre"
+              "comment": "(O/N) Pour récupérer le stock à vendre [si stock non dédié]"
+            },
+            {
+              "name": "horizonMax",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour récupérer le stock à vendre [si stock non dédié avec arrêt horizon max]"
+            },
+            {
+              "name": "stockmini",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour récupérer le stock mini"
+            },
+            {
+              "name": "stockaffecte",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour récupérer le stock affecté"
+            },
+            {
+              "name": "encourslogistique",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour récupérer l’encours de sortie logistique"
+            },
+            {
+              "name": "transitentrant",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour récupérer les ordres de transfert en arrivée"
+            },
+            {
+              "name": "transitsortant",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour récupérer les ordres de transfert en partance"
+            },
+            {
+              "name": "datestockinitial",
+              "type": "Num(8,0)",
+              "obl": "",
+              "comment": "Date calcul stock initial [à 0 si stock initial non demandé] au format AAAAMMJJ"
+            },
+            {
+              "name": "heurestockinitial",
+              "type": "Num(6,0)",
+              "obl": "",
+              "comment": "Heure calcul stock initial [à 0 si stock initial non demandé] au format HHMMSS"
+            },
+            {
+              "name": "exclusivementReapproMini",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour tenir compte des mouvements uniquement liés au réapprovisionnement sur stock mini [à N par principe]"
             }
           ],
-          "returns_type": "Liste de MSWSTKList0PLISTESTOCKSKU02Result",
-          "returns_props": [
+          "notes": {
+            "1": "Il faut renseigner un tiers ou demander le stock physique point de vente ('physiquePointdeVente' = 'O') ou le stock disponible entrepôt ('disponibleEntrepot' = 'O'). Si un tiers 'pNumtiers' est précisé et est un point de vente, le stock récupéré sera le stock physique ; si c'est un entrepôt, le stock récupéré sera le stock disponible."
+          },
+          "returns_type": "Liste de MSWSTKList0PLISTESTOCKSKU020PLISTESTOCKSKU02Result",
+          "return_behavior": "Si pas d’erreur, renvoie le stock pour chaque SKU du lieu PDV ou entrepôt (fonction du paramètre 'stockazero'). Si aucun SKU n'est récupéré par rapport aux paramètres d'entrée, la liste renvoie un enregistrement avec msgErreur = '#INF - AUCUN stock sur la sélection demandée'.",
+          "errors": [
             {
-              "name": "codTai",
+              "message": "ERREUR paramètres d’entrée",
+              "comment": "Identifiant société non renseigné ou (pas de tiers passé en paramètre et physiquePointdeVente <> ‘O’ et disponibleEntrepot <> ‘O’) ou stockazero <> ‘O’ ou ‘N’"
+            },
+            {
+              "message": "#ERR - Tiers de type lieu [LOG] non trouvé pour l’identifiant XXX",
+              "comment": "Le lieu de stock entrepôt avec identifiant XXX n’est pas reconnu en tant que lieu"
+            },
+            {
+              "message": "#ERR - ERREUR lieu stock non associé au Point de vente XXX",
+              "comment": "Le point de vente avec identifiant XXX n’est associé à aucun lieu de stock"
+            },
+            {
+              "message": "#ERR - Tiers de type lieu de stock non trouvé pour l’identifiant XXX",
+              "comment": "Le lieu de stock du point de vente avec identifiant XXX n’est pas reconnu en tant que lieu"
+            },
+            {
+              "message": "#ERR - Aucun sku trouvé avec l'identifiant XXX",
+              "comment": "Aucun SKU trouvé pour identifiant référence XXX"
+            }
+          ]
+        },
+        {
+          "name": "expose_delta_stock_lieu",
+          "description": "Cette méthode permet la récupération des stocks mouvementés depuis une date/heure de référence. Elle s’appuie sur les modifications du stock physique (le stock disponible et le stock à vendre étant des calculs). Préconisation : interroger tiers par tiers pour optimiser les performances.",
+          "params": [
+            {
+              "name": "socId",
+              "type": "Num(5,0)",
+              "obl": "X",
+              "comment": "Identifiant Prios société"
+            },
+            {
+              "name": "pNumtiers",
+              "type": "Num(7,0)",
+              "obl": "X",
+              "obl_note": "1",
+              "comment": "A insérer dans liste [listetiersId] - Liste des numéros de tiers Prios correspondant au point de vente ou entrepôt."
+            },
+            {
+              "name": "physiquePointdeVente",
+              "type": "Alpha(1)",
+              "obl": "X",
+              "obl_note": "1",
+              "comment": "(O/N) Stock physique du point de vente"
+            },
+            {
+              "name": "disponibleEntrepot",
+              "type": "Alpha(1)",
+              "obl": "X",
+              "obl_note": "1",
+              "comment": "(O/N) Stock disponible entrepôt"
+            },
+            {
+              "name": "stockazero",
+              "type": "Alpha(1)",
+              "obl": "X",
+              "comment": "(O/N) Pour récupérer les SKU sans stock [avec un stock à 0]"
+            },
+            {
+              "name": "stockavendre",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour récupérer le stock à vendre [si stock non dédié]"
+            },
+            {
+              "name": "horizonMax",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour récupérer le stock à vendre [si stock non dédié avec arrêt horizon max]"
+            },
+            {
+              "name": "stockmini",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour récupérer le stock mini"
+            },
+            {
+              "name": "stockaffecte",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour récupérer le stock affecté"
+            },
+            {
+              "name": "encourslogistique",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour récupérer l’encours de sortie logistique"
+            },
+            {
+              "name": "transitentrant",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour récupérer les ordres de transfert en arrivée"
+            },
+            {
+              "name": "transitsortant",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour récupérer les ordres de transfert en partance"
+            },
+            {
+              "name": "datestockinitial",
+              "type": "Num(8,0)",
+              "obl": "",
+              "comment": "Date calcul stock initial [à 0 si stock initial non demandé] au format AAAAMMJJ"
+            },
+            {
+              "name": "heurestockinitial",
+              "type": "Num(6,0)",
+              "obl": "",
+              "comment": "Heure calcul stock initial [à 0 si stock initial non demandé] au format HHMMSS"
+            },
+            {
+              "name": "exclusivementReapproMini",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour tenir compte des mouvements uniquement liés au réapprovisionnement sur stock mini [à N par principe]"
+            },
+            {
+              "name": "derniereDate",
+              "type": "Num(8,0)",
+              "obl": "X",
+              "comment": "Date stockée par l’appelant depuis le dernier appel au format AAAAMMJJ"
+            },
+            {
+              "name": "derniereHeure",
+              "type": "Num(6,0)",
+              "obl": "",
+              "comment": "Heure stockée par l’appelant depuis le dernier appel au format HHMMSS"
+            }
+          ],
+          "notes": {
+            "1": "Il faut renseigner un tiers ou demander le stock physique point de vente ('physiquePointdeVente' = 'O') ou le stock disponible entrepôt ('disponibleEntrepot' = 'O'). Si un tiers 'pNumtiers' est précisé et est un point de vente, le stock récupéré sera le stock physique ; si c'est un entrepôt, le stock récupéré sera le stock disponible."
+          },
+          "returns_type": "Liste de MSWSTKList0PLISTESTOCKSKU070PLISTESTOCKSKU07Result",
+          "return_behavior": "Si pas d’erreur, renvoie le stock pour chaque SKU du lieu PDV ou entrepôt pour lequel une modification du stock physique a eu lieu depuis la date/heure transmise. Pour chaque lieu traité, un enregistrement supplémentaire est envoyé (msgErreur = 'Horodatage - Pour prochaine demande de traitement') avec dateTraitement et heureTraitement, à réinjecter dans derniereDate et derniereHeure lors du prochain appel.",
+          "errors": [
+            {
+              "message": "#ERR - ERREUR paramètres d'entrée",
+              "comment": "Identifiant société non renseigné ou (pas de tiers passé en paramètre et physiquePointdeVente <> ‘O’ et disponibleEntrepot <> ‘O’) ou stockazero <> ‘O’ ou ‘N’"
+            },
+            {
+              "message": "#ERR - Tiers de type lieu [LOG] non trouvé pour l’identifiant XXX",
+              "comment": "Le lieu de stock entrepôt avec identifiant XXX n’est pas reconnu en tant que lieu"
+            },
+            {
+              "message": "#ERR - ERREUR lieu stock non associé au Point de vente XXX",
+              "comment": "Le point de vente avec identifiant XXX n’est associé à aucun lieu de stock"
+            },
+            {
+              "message": "#ERR - Tiers de type lieu de stock non trouvé pour l’identifiant XXX",
+              "comment": "Le lieu de stock du point de vente avec identifiant XXX n’est pas reconnu en tant que lieu"
+            },
+            {
+              "message": "#ERR - Absence de date début de traitement",
+              "comment": "La date ‘derniereDate’ n’est pas renseignée"
+            },
+            {
+              "message": "#ERR - Aucun sku trouvé avec l'identifiant XXX",
+              "comment": "Aucun SKU trouvé pour identifiant référence XXX"
+            }
+          ]
+        },
+        {
+          "name": "expose_stock_retail",
+          "description": "Cette méthode permet la récupération de stock sur entrepôt ou point de vente pour une référence (et éventuellement pour les autres références du modèle).",
+          "params": [
+            {
+              "name": "socId",
+              "type": "Num(5,0)",
+              "obl": "X",
+              "comment": "Identifiant Prios société"
+            },
+            {
+              "name": "tiersId",
+              "type": "Num(7,0)",
+              "obl": "X",
+              "comment": "Numéro de tiers Prios correspondant au point de vente ou entrepôt."
+            },
+            {
+              "name": "refId",
+              "type": "Num(7,0)",
+              "obl": "X",
+              "comment": "Identifiant Prios de la référence/coloris"
+            },
+            {
+              "name": "autresrefmod",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Autres références/coloris du même modèle"
+            },
+            {
+              "name": "stockPhy",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Stock physique du point de vente"
+            },
+            {
+              "name": "stockMin",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour récupérer le stock mini"
+            },
+            {
+              "name": "stockDis",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Stock disponible entrepôt"
+            },
+            {
+              "name": "stockAve",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour récupérer le stock à vendre [si stock non dédié]"
+            },
+            {
+              "name": "transEnt",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour récupérer les ordres de transfert en arrivée"
+            },
+            {
+              "name": "transSor",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour récupérer les ordres de transfert en partance"
+            },
+            {
+              "name": "stockAff",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour récupérer le stock affecté"
+            },
+            {
+              "name": "encourslog",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour récupérer l’encours de sortie logistique"
+            },
+            {
+              "name": "autresLieu",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour récupérer les autres stocks autorisés (via les associations des lieux)"
+            },
+            {
+              "name": "datestockinitial",
+              "type": "Num(8,0)",
+              "obl": "",
+              "comment": "Date calcul stock initial [à 0 si stock initial non demandé] au format AAAAMMJJ"
+            },
+            {
+              "name": "heurestockinitial",
+              "type": "Num(6,0)",
+              "obl": "",
+              "comment": "Heure calcul stock initial [à 0 si stock initial non demandé] au format HHMMSS"
+            },
+            {
+              "name": "exclusivementReapproMini",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "(O/N) Pour tenir compte des mouvements uniquement liés au réapprovisionnement sur stock mini [à N par principe]"
+            }
+          ],
+          "returns_type": "Liste de MSWSTKList0PLISTESTOCKSKU010PLISTESTOCKSKU01Result",
+          "return_behavior": "Si pas d’erreur, renvoie le stock pour chaque SKU de la référence pour le lieu demandé. Si aucun stock n'est trouvé, renvoie un enregistrement avec msgErreur = '#INF - Aucun stock [type ligne] id.ref [identifiant référence] Lieu [identifiant lieu] Tiers [identifiant tiers]'. De même en cas d'absence d'ordres de transfert : '#INF - Aucun transfert [type ligne]...'.",
+          "errors": [
+            {
+              "message": "#ERR - Aucun lieu trouvé",
+              "comment": "Aucun lieu trouvé par rapport au tiers passé en paramètre"
+            },
+            {
+              "message": "#ERR - Aucune référence trouvée avec l'identifiant XXX",
+              "comment": "Référence avec identifiant XXX passé en paramètre non existante"
+            },
+            {
+              "message": "#ERR - Tiers de type lieu de stock non trouvé pour l’identifiant XXX",
+              "comment": "Le lieu de stock du point de vente avec identifiant XXX n’est pas reconnu en tant que lieu"
+            },
+            {
+              "message": "#ERR - Aucun sku trouvé avec l'identifiant XXX",
+              "comment": "Aucun SKU trouvé pour identifiant référence XXX"
+            }
+          ]
+        },
+        {
+          "name": "integrer_mouvement_stock_pdv",
+          "description": "Cette méthode permet d’intégrer les mouvements de stock divers en provenance des points de vente. Le code PDV détermine le lieu de stock (possible également depuis un code lieu non connu en tant que PDV).",
+          "params": [
+            {
+              "name": "pIdtSociete",
+              "type": "Num(5,0)",
+              "obl": "X",
+              "obl_note": "1",
+              "comment": "Identifiant Prios société"
+            },
+            {
+              "name": "pCodeSociete",
+              "type": "Alpha(10)",
+              "obl": "X",
+              "obl_note": "1",
+              "comment": "Code société"
+            },
+            {
+              "name": "pNumTiersPDV",
+              "type": "Num(7,0)",
+              "obl": "X",
+              "obl_note": "2",
+              "comment": "Identifiant Prios du tiers point de vente"
+            },
+            {
+              "name": "pCodePDV",
+              "type": "Alpha(10)",
+              "obl": "X",
+              "obl_note": "2",
+              "comment": "Code du tiers point de vente"
+            },
+            {
+              "name": "pNumTiersLieu",
+              "type": "Num(7,0)",
+              "obl": "X",
+              "obl_note": "2",
+              "comment": "Identifiant Prios du lieu logistique"
+            },
+            {
+              "name": "pCodeTiersLieu",
+              "type": "Alpha(10)",
+              "obl": "X",
+              "obl_note": "2",
+              "comment": "Code du tiers du lieu logistique"
+            },
+            {
+              "name": "pCodeCanal",
+              "type": "Alpha(10)",
+              "obl": "",
+              "comment": "Code du canal [Ne pas renseigner si pas de gestion du stock par canal]"
+            },
+            {
+              "name": "pSKU",
+              "type": "Alpha(18)",
+              "obl": "X",
+              "obl_note": "3",
+              "comment": "Code SKU"
+            },
+            {
+              "name": "pGTIN",
+              "type": "Num(14,0)",
+              "obl": "X",
+              "obl_note": "3",
+              "comment": "EAN"
+            },
+            {
+              "name": "pUPC",
+              "type": "Num(12,0)",
+              "obl": "X",
+              "obl_note": "3",
+              "comment": "UPC"
+            },
+            {
+              "name": "pCodeReference",
+              "type": "Alpha(15)",
+              "obl": "X",
+              "obl_note": "3",
+              "comment": "Code de la référence"
+            },
+            {
+              "name": "pIdtTaille",
+              "type": "Alpha(5)",
+              "obl": "X",
+              "obl_note": "3",
+              "comment": "Taille"
+            },
+            {
+              "name": "pQuantite",
+              "type": "Num(13,4)",
+              "obl": "X",
+              "comment": "Quantité"
+            },
+            {
+              "name": "pCodeChoix",
+              "type": "Alpha(1)",
+              "obl": "",
+              "comment": "Code choix [Ne pas renseigner si pas de gestion du stock par choix]"
+            },
+            {
+              "name": "pCodeLot1",
+              "type": "Alpha(20)",
+              "obl": "",
+              "comment": "Lot 1 [Ne pas renseigner si pas de gestion du stock par lot]"
+            },
+            {
+              "name": "pCodeLot2",
+              "type": "Alpha(20)",
+              "obl": "",
+              "comment": "Lot 2 [Ne pas renseigner si pas de gestion du stock par lot]"
+            },
+            {
+              "name": "pCodeLot3",
+              "type": "Alpha(20)",
+              "obl": "",
+              "comment": "Lot 3 [Ne pas renseigner si pas de gestion du stock par lot]"
+            },
+            {
+              "name": "pNumeroSerie",
+              "type": "Alpha(20)",
+              "obl": "",
+              "comment": "N° série [Ne pas renseigner si pas de gestion du stock par n° de série]"
+            },
+            {
+              "name": "pCodeMouvement",
+              "type": "Alpha(5)",
+              "obl": "X",
+              "comment": "Code de mouvement"
+            },
+            {
+              "name": "pDateMouvement",
+              "type": "Num(8,0)",
+              "obl": "X",
+              "comment": "Date mouvement au format AAAAMMJJ"
+            },
+            {
+              "name": "pHeureMouvement",
+              "type": "Num(6,0)",
+              "obl": "X",
+              "comment": "Heure du mouvement au format HHMMSS"
+            },
+            {
+              "name": "pSensMouvement",
+              "type": "Alpha(1)",
+              "obl": "X",
+              "comment": "Sens du mouvement : ‘+’ si mouvement en entrée, ‘-’ si mouvement en sortie"
+            },
+            {
+              "name": "pLibelleMouvement",
+              "type": "Alpha(60)",
+              "obl": "X",
+              "comment": "Libellé du mouvement"
+            },
+            {
+              "name": "pSuiviExterne",
+              "type": "Alpha(20)",
+              "obl": "",
+              "comment": "Identifiant mouvement externe"
+            }
+          ],
+          "notes": {
+            "1": "Il faut renseigner le code ou l’identifiant de la société.",
+            "2": "Il faut renseigner le code ou l’identifiant du point de vente ou le code du tiers ou l’identifiant du lieu (non PDV).",
+            "3": "Il faut renseigner le code référence ou le code SKU ou l’EAN ou l’UPC. Si la référence est à taille et que seul le code référence est renseigné, il faut aussi renseigner la taille."
+          },
+          "returns_type": "Liste de MSWSTKListPLISTETRAITEMEN18PLISTETRAITEMEN18Result",
+          "return_behavior": "Si pas d’erreur, création d’une interface d’entrée des mouvements de stock (codeTraitement = 'T').",
+          "errors": [
+            {
+              "message": "#ERR - ABSENCE id. ou code société",
+              "comment": "Pas d’identifiant ni de code société renseigné"
+            },
+            {
+              "message": "#ERR - ERREUR code société XXX",
+              "comment": "Société avec code XXX non trouvée"
+            },
+            {
+              "message": "#ERR - ERREUR identifiant société XXX",
+              "comment": "Société avec identifiant XXX non trouvée"
+            },
+            {
+              "message": "#ERR - ABSENCE id. ou code Point de vente",
+              "comment": "Pas d’identifiant ou de code tiers renseigné"
+            },
+            {
+              "message": "#ERR - ERREUR code Point de vente XXX",
+              "comment": "PDV avec code XXX non trouvé"
+            },
+            {
+              "message": "ERR - ERREUR Id. [N° tiers] Point de vente XXX",
+              "comment": "PDV avec identifiant XXX non trouvé"
+            },
+            {
+              "message": "#ERR - ERREUR lieu stock non associé au Point de vente XXX",
+              "comment": "Aucun lieu associé au PDV"
+            },
+            {
+              "message": "#ERR - Tiers de type lieu de stock non trouvé pour l'identifiant XXX",
+              "comment": "Lieu non trouvé avec identifiant XXX"
+            },
+            {
+              "message": "#ERR - Tiers de type lieu de stock non trouvé pour le numero de tiers XXX",
+              "comment": "Lieu non trouvé pour le tiers avec identifiant XXX en paramètre"
+            },
+            {
+              "message": "#ERR - Tiers de type lieu de stock non trouvé pour le code tiers XXX",
+              "comment": "Lieu non trouvé pour le tiers avec code XXX en paramètre"
+            },
+            {
+              "message": "#ERR - Anomalie(s) intégration $MVTSTK$  N°XXX",
+              "comment": "Erreur pour intégration des mouvements pour l’interface XXX"
+            }
+          ]
+        }
+      ],
+      "types": [
+        {
+          "name": "MSWSTKList0PLISTESTOCKSKU150PLISTESTOCKSKU15Result",
+          "props": [
+            {
+              "name": "codeSKU",
+              "type": "Alpha(18)",
+              "comment": "Code SKU"
+            },
+            {
+              "name": "codeTaille",
               "type": "Alpha(5)",
               "comment": "Taille"
             },
             {
-              "name": "codeSku",
-              "type": "Alpha(18)",
-              "comment": "Code SKU"
+              "name": "codeUPC",
+              "type": "Num(12,0)",
+              "comment": "UPC"
+            },
+            {
+              "name": "idtReference",
+              "type": "Num(7,0)",
+              "comment": "Identifiant de la référence/coloris"
+            },
+            {
+              "name": "idtSKU",
+              "type": "Num(15,0)",
+              "comment": "[key_sku]"
+            },
+            {
+              "name": "idtSociete",
+              "type": "Num(5,0)",
+              "comment": "Identifiant société"
+            },
+            {
+              "name": "indicetaille",
+              "type": "Num(2,0)",
+              "comment": "Position de la taille/pointure dans la grille"
+            },
+            {
+              "name": "numGTIN",
+              "type": "Num(14,0)",
+              "comment": "EAN [unique]"
+            },
+            {
+              "name": "numTiersPDV",
+              "type": "Num(7,0)",
+              "comment": "Identifiant du tiers point de vente"
             },
             {
               "name": "quantiteStock",
@@ -2620,70 +3282,283 @@
             {
               "name": "typeLigne",
               "type": "Alpha(1)",
-              "comment": "P, D, M, V, E, S, L, A"
+              "comment": "Type de ligne : ‘V’ : à vendre horizon maxi, ‘T’ : à vendre horizon infini, ‘R’ : réservé, ‘P’ : physique, ‘M’ : maxi"
             },
             {
-              "name": "typeTiers",
-              "type": "Alpha(10)",
-              "comment": "PDV ou LOG"
+              "name": "codeTraitement",
+              "type": "Alpha(1)",
+              "comment": "Code traitement : ‘T’ : traitement effectué, ‘X’ : anomalie/erreur. Voir message correspondant"
+            },
+            {
+              "name": "dateTraitement",
+              "type": "Num(8,0)",
+              "comment": "Date du traitement sous la forme AAAAMMJJ"
+            },
+            {
+              "name": "heureTraitement",
+              "type": "Num(6,0)",
+              "comment": "Heure du traitement sous la forme HHMMSS"
+            },
+            {
+              "name": "message",
+              "type": "Alpha(250)",
+              "comment": "Libellé du message"
             }
           ]
         },
         {
-          "name": "integrer_mouvement_stock_pdv",
-          "description": "Intégrer les mouvements de stock divers en provenance des points de vente.",
-          "params": [
+          "name": "MSWSTKList0PLISTESTOCKSKU020PLISTESTOCKSKU02Result",
+          "props": [
             {
-              "name": "pIdtSociete",
-              "type": "Num(5,0)",
-              "obl": "X",
-              "comment": "Identifiant Prios société"
+              "name": "codTai",
+              "type": "Alpha(5)",
+              "comment": "Taille"
             },
             {
-              "name": "pCodeSociete",
-              "type": "Alpha(10)",
-              "obl": "X",
-              "comment": "Code société"
+              "name": "codUPC",
+              "type": "Num(12,0)",
+              "comment": "UPC"
             },
             {
-              "name": "pNumTiersPDV",
-              "type": "Num(7,0)",
-              "obl": "X",
-              "comment": "Identifiant Prios du tiers point de vente"
-            },
-            {
-              "name": "pCodePDV",
-              "type": "Alpha(10)",
-              "obl": "X",
-              "comment": "Code du tiers point de vente"
-            },
-            {
-              "name": "pSKU",
+              "name": "codeSku",
               "type": "Alpha(18)",
-              "obl": "X",
               "comment": "Code SKU"
             },
             {
-              "name": "pQuantite",
+              "name": "datePmp",
+              "type": "Num(8,0)",
+              "comment": "Date dernier PMP au format AAAAMMJJ"
+            },
+            {
+              "name": "idtReference",
+              "type": "Num(7,0)",
+              "comment": "Identifiant de la référence/coloris"
+            },
+            {
+              "name": "idtSKU",
+              "type": "Num(15,0)",
+              "comment": "[key_sku]"
+            },
+            {
+              "name": "idtSociete",
+              "type": "Num(5,0)",
+              "comment": "Identifiant société"
+            },
+            {
+              "name": "indTai",
+              "type": "Num(2,0)",
+              "comment": "Position de la taille/pointure dans la grille"
+            },
+            {
+              "name": "numGTIN",
+              "type": "Num(14,0)",
+              "comment": "EAN [unique]"
+            },
+            {
+              "name": "numTiers",
+              "type": "Num(7,0)",
+              "comment": "Identifiant du tiers point de vente/entrepôt"
+            },
+            {
+              "name": "quantiteStock",
               "type": "Num(13,4)",
-              "obl": "X",
-              "comment": "Quantité"
+              "comment": "Quantité stock"
             },
             {
-              "name": "pCodeMouvement",
-              "type": "Alpha(5)",
-              "obl": "X",
-              "comment": "Code de mouvement"
-            },
-            {
-              "name": "pSensMouvement",
+              "name": "typeLigne",
               "type": "Alpha(1)",
-              "obl": "X",
-              "comment": "Sens du mouvement ('+' ou '-')"
+              "comment": "Type de ligne : ‘P’ : physique, ‘D’ : disponible, ‘M’ : mini, ‘V’ : à vendre, ‘E’ : transit entrée, ‘S’ : transit sortie, ‘L’ : encours logistique, ‘A’ : affecté"
+            },
+            {
+              "name": "typeTiers",
+              "type": "Alpha(10)",
+              "comment": "Type de tiers : ‘PDV’ : point de vente, ‘LOG’ : entrepôt"
+            },
+            {
+              "name": "valeurRefPmp",
+              "type": "Num(12,5)",
+              "comment": "Valeur du PMP"
+            },
+            {
+              "name": "msgErreur",
+              "type": "Alpha(250)",
+              "comment": "Libellé du message"
             }
-          ],
-          "returns_type": "MSWSTKListPLISTETRAITEMEN18Result",
-          "returns_props": [
+          ]
+        },
+        {
+          "name": "MSWSTKList0PLISTESTOCKSKU070PLISTESTOCKSKU07Result",
+          "props": [
+            {
+              "name": "codTai",
+              "type": "Alpha(5)",
+              "comment": "Taille"
+            },
+            {
+              "name": "codUPC",
+              "type": "Num(12,0)",
+              "comment": "UPC"
+            },
+            {
+              "name": "codeSku",
+              "type": "Alpha(18)",
+              "comment": "Code SKU"
+            },
+            {
+              "name": "datePmp",
+              "type": "Num(8,0)",
+              "comment": "Date dernier PMP au format AAAAMMJJ"
+            },
+            {
+              "name": "idtReference",
+              "type": "Num(7,0)",
+              "comment": "Identifiant de la référence/coloris"
+            },
+            {
+              "name": "idtSKU",
+              "type": "Num(15,0)",
+              "comment": "[key_sku]"
+            },
+            {
+              "name": "idtSociete",
+              "type": "Num(5,0)",
+              "comment": "Identifiant société"
+            },
+            {
+              "name": "indTai",
+              "type": "Num(2,0)",
+              "comment": "Position de la taille/pointure dans la grille"
+            },
+            {
+              "name": "numGTIN",
+              "type": "Num(14,0)",
+              "comment": "EAN [unique]"
+            },
+            {
+              "name": "numTiers",
+              "type": "Num(7,0)",
+              "comment": "Identifiant du tiers point de vente/entrepôt"
+            },
+            {
+              "name": "quantiteStock",
+              "type": "Num(13,4)",
+              "comment": "Quantité stock"
+            },
+            {
+              "name": "typeLigne",
+              "type": "Alpha(1)",
+              "comment": "Type de ligne : ‘P’ : physique, ‘D’ : disponible, ‘M’ : mini, ‘V’ : à vendre, ‘E’ : transit entrée, ‘S’ : transit sortie, ‘L’ : encours logistique, ‘A’ : affecté"
+            },
+            {
+              "name": "typeTiers",
+              "type": "Alpha(10)",
+              "comment": "Type de tiers : ‘PDV’ : point de vente, ‘LOG’ : entrepôt"
+            },
+            {
+              "name": "valeurRefPmp",
+              "type": "Num(12,5)",
+              "comment": "Valeur du PMP"
+            },
+            {
+              "name": "dateTraitement",
+              "type": "Num(8,0)",
+              "comment": "Date du traitement au format AAAAMMJJ"
+            },
+            {
+              "name": "heureTraitement",
+              "type": "Num(6,0)",
+              "comment": "Heure du traitement au format HHMMSS"
+            },
+            {
+              "name": "msgErreur",
+              "type": "Alpha(250)",
+              "comment": "Libellé du message"
+            }
+          ]
+        },
+        {
+          "name": "MSWSTKList0PLISTESTOCKSKU010PLISTESTOCKSKU01Result",
+          "props": [
+            {
+              "name": "codTai",
+              "type": "Alpha(5)",
+              "comment": "Taille"
+            },
+            {
+              "name": "codUPC",
+              "type": "Num(12,0)",
+              "comment": "UPC"
+            },
+            {
+              "name": "codeSku",
+              "type": "Alpha(18)",
+              "comment": "Code SKU"
+            },
+            {
+              "name": "datePmp",
+              "type": "Num(8,0)",
+              "comment": "Date dernier PMP au format AAAAMMJJ"
+            },
+            {
+              "name": "idtReference",
+              "type": "Num(7,0)",
+              "comment": "Identifiant de la référence/coloris"
+            },
+            {
+              "name": "idtSKU",
+              "type": "Num(15,0)",
+              "comment": "[key_sku]"
+            },
+            {
+              "name": "idtSociete",
+              "type": "Num(5,0)",
+              "comment": "Identifiant société"
+            },
+            {
+              "name": "indTai",
+              "type": "Num(2,0)",
+              "comment": "Position de la taille/pointure dans la grille"
+            },
+            {
+              "name": "numGTIN",
+              "type": "Num(14,0)",
+              "comment": "EAN [unique]"
+            },
+            {
+              "name": "numTiers",
+              "type": "Num(7,0)",
+              "comment": "Identifiant du tiers point de vente/entrepôt"
+            },
+            {
+              "name": "quantiteStock",
+              "type": "Num(13,4)",
+              "comment": "Quantité stock"
+            },
+            {
+              "name": "typeLigne",
+              "type": "Alpha(1)",
+              "comment": "Type de ligne : ‘P’ : physique, ‘D’ : disponible, ‘M’ : mini, ‘V’ : à vendre, ‘E’ : transit entrée, ‘S’ : transit sortie, ‘L’ : encours logistique, ‘A’ : affecté"
+            },
+            {
+              "name": "typeTiers",
+              "type": "Alpha(10)",
+              "comment": "Type de tiers : ‘PDV’ : point de vente, ‘LOG’ : entrepôt"
+            },
+            {
+              "name": "valeurRefPmp",
+              "type": "Num(12,5)",
+              "comment": "Valeur du PMP"
+            },
+            {
+              "name": "msgErreur",
+              "type": "Alpha(250)",
+              "comment": "Libellé du message"
+            }
+          ]
+        },
+        {
+          "name": "MSWSTKListPLISTETRAITEMEN18PLISTETRAITEMEN18Result",
+          "props": [
             {
               "name": "idtSociete",
               "type": "Num(5,0)",
@@ -2695,21 +3570,289 @@
               "comment": "Code du tiers point de vente"
             },
             {
+              "name": "codeLieu",
+              "type": "Alpha(10)",
+              "comment": "Code du tiers"
+            },
+            {
+              "name": "dateTraitement",
+              "type": "Num(8,0)",
+              "comment": "Date de traitement au format AAAAMMJJ"
+            },
+            {
+              "name": "heuretraitement",
+              "type": "Num(6,0)",
+              "comment": "Heure de traitement au format HHMMSS"
+            },
+            {
               "name": "codeTraitement",
               "type": "Alpha(1)",
-              "comment": "'T' : traitement effectué. 'X' : erreur"
+              "comment": "Code traitement : ‘T’ : traitement effectué, ‘X’ : anomalie/erreur. Voir message correspondant"
             },
             {
               "name": "msgErreur",
               "type": "Alpha(250)",
-              "comment": "Message d'erreur"
+              "comment": "Libellé du message"
             }
           ]
         }
-      ],
-      "types": [
       ]
     },
+    //{
+    //  "id": "part2",
+    //  "title": "2. Stock",
+    //  "methods": [
+    //    {
+    //      "name": "stock_a_vendre_b2c",
+    //      "description": "Permet la récupération des types de stock (à vendre, réservé, physique, maxi).",
+    //      "params": [
+    //        {
+    //          "name": "codeSociete",
+    //          "type": "Alpha(10)",
+    //          "obl": "X",
+    //          "comment": "Code société"
+    //        },
+    //        {
+    //          "name": "idtSociete",
+    //          "type": "Num(5,0)",
+    //          "obl": "X",
+    //          "comment": "Identifiant Prios société"
+    //        },
+    //        {
+    //          "name": "codeTiersPDV",
+    //          "type": "Alpha(10)",
+    //          "obl": "X",
+    //          "comment": "Code du tiers point de vente"
+    //        },
+    //        {
+    //          "name": "numTiersPDV",
+    //          "type": "Num(7,0)",
+    //          "obl": "X",
+    //          "comment": "Identifiant Prios du tiers point de vente"
+    //        },
+    //        {
+    //          "name": "codeReference",
+    //          "type": "Alpha(15)",
+    //          "obl": "X",
+    //          "comment": "Code référence/coloris"
+    //        },
+    //        {
+    //          "name": "IdtReference",
+    //          "type": "Num(7,0)",
+    //          "obl": "X",
+    //          "comment": "Identifiant Prios référence"
+    //        },
+    //        {
+    //          "name": "autresRefModele",
+    //          "type": "Alpha(1)",
+    //          "obl": "",
+    //          "comment": "‘O’ pour récupérer le stock sur les autres références"
+    //        },
+    //        {
+    //          "name": "codeReferencement",
+    //          "type": "Alpha(10)",
+    //          "obl": "X",
+    //          "comment": "Code du référencement"
+    //        },
+    //        {
+    //          "name": "idtReferencement",
+    //          "type": "Num(5,0)",
+    //          "obl": "X",
+    //          "comment": "Identifiant référencement"
+    //        },
+    //        {
+    //          "name": "typeStock",
+    //          "type": "Alpha(1)",
+    //          "obl": "X",
+    //          "comment": "V (vendre), T (vendre infini), R (réservé), P (physique), M (maxi)"
+    //        },
+    //        {
+    //          "name": "cdePrevisionnelle",
+    //          "type": "Alpha(1)",
+    //          "obl": "",
+    //          "comment": "‘O’ pour ajout des commandes prévisionnelles"
+    //        }
+    //      ],
+    //      "returns_type": "Liste de MSWSTKList0PLISTESTOCKSKU15Result",
+    //      "returns_props": [
+    //        {
+    //          "name": "codeSKU",
+    //          "type": "Alpha(18)",
+    //          "comment": "Code SKU"
+    //        },
+    //        {
+    //          "name": "codeTaille",
+    //          "type": "Alpha(5)",
+    //          "comment": "Taille"
+    //        },
+    //        {
+    //          "name": "idtReference",
+    //          "type": "Num(7,0)",
+    //          "comment": "Identifiant de la référence/coloris"
+    //        },
+    //        {
+    //          "name": "quantiteStock",
+    //          "type": "Num(13,4)",
+    //          "comment": "Quantité stock"
+    //        },
+    //        {
+    //          "name": "typeLigne",
+    //          "type": "Alpha(1)",
+    //          "comment": "V, T, R, P, M"
+    //        }
+    //      ]
+    //    },
+    //    {
+    //      "name": "expose_stock_lieu",
+    //      "description": "Permet la récupération de stock sur entrepôt ou points de vente.",
+    //      "params": [
+    //        {
+    //          "name": "socId",
+    //          "type": "Num(5,0)",
+    //          "obl": "X",
+    //          "comment": "Identifiant Prios société"
+    //        },
+    //        {
+    //          "name": "pNumtiers",
+    //          "type": "Num(7,0)",
+    //          "obl": "X",
+    //          "comment": "Liste des numéros de tiers Prios (PDV ou entrepôt)"
+    //        },
+    //        {
+    //          "name": "physiquePointdeVente",
+    //          "type": "Alpha(1)",
+    //          "obl": "X",
+    //          "comment": "(O/N) Stock physique du point de vente"
+    //        },
+    //        {
+    //          "name": "disponibleEntrepot",
+    //          "type": "Alpha(1)",
+    //          "obl": "X",
+    //          "comment": "(O/N) Stock disponible entrepôt"
+    //        },
+    //        {
+    //          "name": "stockazero",
+    //          "type": "Alpha(1)",
+    //          "obl": "X",
+    //          "comment": "(O/N) Pour récupérer les SKU sans stock"
+    //        },
+    //        {
+    //          "name": "stockavendre",
+    //          "type": "Alpha(1)",
+    //          "obl": "",
+    //          "comment": "(O/N) Pour récupérer le stock à vendre"
+    //        }
+    //      ],
+    //      "returns_type": "Liste de MSWSTKList0PLISTESTOCKSKU02Result",
+    //      "returns_props": [
+    //        {
+    //          "name": "codTai",
+    //          "type": "Alpha(5)",
+    //          "comment": "Taille"
+    //        },
+    //        {
+    //          "name": "codeSku",
+    //          "type": "Alpha(18)",
+    //          "comment": "Code SKU"
+    //        },
+    //        {
+    //          "name": "quantiteStock",
+    //          "type": "Num(13,4)",
+    //          "comment": "Quantité stock"
+    //        },
+    //        {
+    //          "name": "typeLigne",
+    //          "type": "Alpha(1)",
+    //          "comment": "P, D, M, V, E, S, L, A"
+    //        },
+    //        {
+    //          "name": "typeTiers",
+    //          "type": "Alpha(10)",
+    //          "comment": "PDV ou LOG"
+    //        }
+    //      ]
+    //    },
+    //    {
+    //      "name": "integrer_mouvement_stock_pdv",
+    //      "description": "Intégrer les mouvements de stock divers en provenance des points de vente.",
+    //      "params": [
+    //        {
+    //          "name": "pIdtSociete",
+    //          "type": "Num(5,0)",
+    //          "obl": "X",
+    //          "comment": "Identifiant Prios société"
+    //        },
+    //        {
+    //          "name": "pCodeSociete",
+    //          "type": "Alpha(10)",
+    //          "obl": "X",
+    //          "comment": "Code société"
+    //        },
+    //        {
+    //          "name": "pNumTiersPDV",
+    //          "type": "Num(7,0)",
+    //          "obl": "X",
+    //          "comment": "Identifiant Prios du tiers point de vente"
+    //        },
+    //        {
+    //          "name": "pCodePDV",
+    //          "type": "Alpha(10)",
+    //          "obl": "X",
+    //          "comment": "Code du tiers point de vente"
+    //        },
+    //        {
+    //          "name": "pSKU",
+    //          "type": "Alpha(18)",
+    //          "obl": "X",
+    //          "comment": "Code SKU"
+    //        },
+    //        {
+    //          "name": "pQuantite",
+    //          "type": "Num(13,4)",
+    //          "obl": "X",
+    //          "comment": "Quantité"
+    //        },
+    //        {
+    //          "name": "pCodeMouvement",
+    //          "type": "Alpha(5)",
+    //          "obl": "X",
+    //          "comment": "Code de mouvement"
+    //        },
+    //        {
+    //          "name": "pSensMouvement",
+    //          "type": "Alpha(1)",
+    //          "obl": "X",
+    //          "comment": "Sens du mouvement ('+' ou '-')"
+    //        }
+    //      ],
+    //      "returns_type": "MSWSTKListPLISTETRAITEMEN18Result",
+    //      "returns_props": [
+    //        {
+    //          "name": "idtSociete",
+    //          "type": "Num(5,0)",
+    //          "comment": "Identifiant Prios société"
+    //        },
+    //        {
+    //          "name": "codePDV",
+    //          "type": "Alpha(10)",
+    //          "comment": "Code du tiers point de vente"
+    //        },
+    //        {
+    //          "name": "codeTraitement",
+    //          "type": "Alpha(1)",
+    //          "comment": "'T' : traitement effectué. 'X' : erreur"
+    //        },
+    //        {
+    //          "name": "msgErreur",
+    //          "type": "Alpha(250)",
+    //          "comment": "Message d'erreur"
+    //        }
+    //      ]
+    //    }
+    //  ],
+    //  "types": [
+    //  ]
+    //},
     {
       "id": "part3",
       "title": "3. Commande",
