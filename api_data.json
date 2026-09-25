@@ -2461,7 +2461,7 @@
       "methods": [
         {
           "name": "stock_a_vendre_b2c",
-          "description": "Cette méthode permet la récupération des types de stock (à vendre à horizon maxi [V], à vendre à horizon infini [T], réservé [R], physique [P] et maxi [M]) à la référence pour chacun des SKU.",
+          "description": "<p class=\"mb-2\">Cette méthode permet la récupération des ‘types’ de stock suivants :</p><ul class=\"mb-1 ps-3\"><li><strong>Stock à vendre à horizon maxi [V] :</strong> Stock disponible – quantités sorties prévues (commandes clients non affectées …) jusqu’à l’horizon maxi (horizon référence ou paramétrage général) + commandes prévisionnelles (selon <code>cdePrevisionnelle</code>).</li><li><strong>Stock à vendre à horizon infini [T] :</strong> Stock disponible – quantités sorties prévues jusqu’à l’horizon infini (sans notion de date) + commandes prévisionnelles.</li><li><strong>Stock réservé [R] :</strong> Commandes prévisionnelles (quantités affectées) liées au PDV ou à la centrale.</li><li><strong>Stock physique [P] :</strong> Stock physique réel en magasin ou entrepôt.</li><li><strong>Stock maxi [M] :</strong> Stock disponible – quantités sorties prévues jusqu'à l'infini + commandes prévisionnelles commandées + quantités entrées prévues OA/OF.</li></ul>",
           "params": [
             {
               "name": "codeSociete",

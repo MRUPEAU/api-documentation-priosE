@@ -106,3 +106,44 @@ body {
             border-bottom: 3px solid #0d6efd;
             background-color: transparent;
         }
+
+/* Conteneur descriptif tronqué */
+.method-desc-container {
+    position: relative;
+    max-height: 72px; /* ~3 lignes */
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+    /* État déplié */
+    .method-desc-container.expanded {
+        max-height: 1200px;
+    }
+
+    /* Dégradé de fondu blanc quand le texte est replié */
+    .method-desc-container:not(.expanded)::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 30px;
+        background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+        pointer-events: none;
+    }
+
+/* Bouton Voir plus / Voir moins */
+.btn-toggle-desc {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #0d6efd;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 0;
+    margin-top: 4px;
+    display: inline-block;
+}
+
+    .btn-toggle-desc:hover {
+        text-decoration: underline;
+    }

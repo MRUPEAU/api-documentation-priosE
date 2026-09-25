@@ -180,13 +180,30 @@ function render() {
 
                 service.methods.forEach(m => {
                     serviceContent += `
-                        <div class="card mb-4" id="method-${m.name}">
-                            <div class="card-header bg-success text-white d-flex align-items-center">
-                                <h5 class="mb-0 me-2 fw-semibold">${escapeHtml(m.name)}</h5>
+    <div class="card mb-4 shadow-sm" id="method-${m.name}">
+        <div class="card-header bg-success text-white d-flex align-items-center">
+            <h5 class="mb-0 me-2 fw-semibold">${escapeHtml(m.name)}</h5>
+        </div>
+        <div class="card-body">
+`;
+
+                    // Gestion du descriptif (enrichi + repliable si long)
+                    const isLongDesc = m.description && (m.description.length > 160 || m.description.includes('<ul>'));
+
+                    if (isLongDesc) {
+                        serviceContent += `
+                            <div class="method-desc-container">
+                                <div class="card-text text-secondary mb-0">${m.description}</div>
                             </div>
-                            <div class="card-body">
-                                <p class="card-text">${escapeHtml(m.description || '')}</p>
-                    `;
+                            <a href="javascript:void(0)" class="btn-toggle-desc mb-3" onclick="toggleDescription(this)">
+                                Voir plus...
+                            </a>
+                        `;
+                    } else {
+                        serviceContent += `
+                            <div class="card-text text-secondary mb-3">${m.description || 'Aucune description disponible.'}</div>
+                        `;
+                    }
 
                     // Tableau des paramètres entrants
                     if (m.params && m.params.length > 0) {
@@ -719,4 +736,11 @@ function showUsages(targetType) {
         const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
         modal.show();
     }
+}
+
+function toggleDescription(btn) {
+    const container = btn.previousElementSibling;
+    container.classList.toggle('expanded');
+    const isExpanded = container.classList.contains('expanded');
+    btn.textContent = isExpanded ? 'Voir moins' : 'Voir plus...';
 }
