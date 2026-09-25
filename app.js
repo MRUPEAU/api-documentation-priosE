@@ -188,7 +188,9 @@ function render() {
 `;
 
                     // Gestion du descriptif (enrichi + repliable si long)
-                    const isLongDesc = m.description && (m.description.length > 160 || m.description.includes('<ul>'));
+                    // Normalisation : transforme le tableau en texte continu s'il s'agit d'une liste
+                    const descContent = Array.isArray(m.description) ? m.description.join('\n') : (m.description || '');
+                    const isLongDesc = descContent && (descContent.length > 160 || descContent.includes('<ul>'));
 
                     if (isLongDesc) {
                         serviceContent += `
