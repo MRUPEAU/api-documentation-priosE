@@ -2,72 +2,216 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
 }
 
-/* --- Barre latérale gauche --- */
+/* ==========================================================================
+   1. STRUCTURES LATÉRALES (Gauches & Droites)
+   ========================================================================== */
 .sidebar {
-    height: 100vh;
-    overflow-y: auto;
-    background-color: #212529;
-    color: #e9ecef;
-    padding: 20px 15px;
     position: fixed;
-    width: 320px;
-    z-index: 1000;
+    top: 0;
+    bottom: 0;
+    height: 100vh;
+    background-color: #1e2227;
+    color: #e9ecef;
+    z-index: 1020;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-    .sidebar h4 {
-        color: #ffffff;
-        font-weight: 600;
-        margin-bottom: 20px;
-        padding-left: 5px;
-    }
+.sidebar-header {
+    padding: 16px;
+    background-color: #16191d;
+    border-bottom: 1px solid #2d3239;
+}
 
-    .sidebar h6 {
-        letter-spacing: 0.5px;
-        font-size: 0.75rem;
-    }
+.sidebar-content {
+    padding: 15px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
 
-/* Liens du menu latéral */
-.sidebar-link {
+/* Volet Gauche (Méthodes) */
+.sidebar-left {
+    left: 0;
+    width: 280px;
+}
+
+/* Volet Droit (Types de données) */
+.sidebar-right {
+    right: 0;
+    width: 440px;
+    background-color: #212529;
+}
+
+/* Liens des méthodes (menu gauche) */
+.sidebar-method-link {
     color: #adb5bd;
     text-decoration: none;
     display: block;
-    padding: 6px 10px;
-    margin-bottom: 3px;
-    font-size: 0.88rem;
+    padding: 8px 12px;
+    margin-bottom: 4px;
+    font-size: 0.86rem;
+    font-weight: 500;
     border-radius: 4px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    transition: background-color 0.15s ease, color 0.15s ease;
+    border-left: 3px solid transparent;
+    transition: all 0.15s ease;
 }
 
-    .sidebar-link:hover {
+    .sidebar-method-link:hover {
         color: #ffffff;
-        background-color: rgba(255, 255, 255, 0.1);
-        text-decoration: none;
+        background-color: rgba(255, 255, 255, 0.08);
     }
 
-/* --- Contenu principal --- */
-.content {
-    margin-left: 320px;
-    padding: 30px;
+    .sidebar-method-link.active {
+        color: #ffffff;
+        background-color: #198754;
+        border-left-color: #75b798;
+        font-weight: 600;
+    }
+
+/* ==========================================================================
+   2. TRANCHES VERTICALES RETRACTABLES (Boutons Languettes)
+   ========================================================================== */
+.vertical-tab {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1030;
+    background-color: #1e2227;
+    color: #ced4da;
+    border: 1px solid #343a40;
+    padding: 14px 6px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    user-select: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: left 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), right 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.2s ease, color 0.2s ease;
 }
 
+    .vertical-tab:hover {
+        background-color: #2d3239;
+        color: #ffffff;
+    }
+
+    .vertical-tab .tab-text {
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        letter-spacing: 1.5px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .vertical-tab .tab-indicator {
+        font-size: 0.65rem;
+    }
+
+/* Positionnement Languette Gauche */
+.vertical-tab-left {
+    left: 280px;
+    border-left: none;
+    border-radius: 0 6px 6px 0;
+}
+
+    .vertical-tab-left .tab-text {
+        transform: rotate(180deg);
+    }
+
+/* Positionnement Languette Droite */
+.vertical-tab-right {
+    right: 440px;
+    border-right: none;
+    border-radius: 6px 0 0 6px;
+}
+
+/* ==========================================================================
+   3. ÉTATS REPLIÉS (Classes appliquées au Body)
+   ========================================================================== */
+/* Volet Gauche Replié */
+body.sidebar-left-collapsed .sidebar-left {
+    transform: translateX(-100%);
+}
+
+body.sidebar-left-collapsed .vertical-tab-left {
+    left: 0;
+}
+
+/* Volet Droit Replié (par défaut) */
+body.sidebar-right-collapsed .sidebar-right {
+    transform: translateX(100%);
+}
+
+body.sidebar-right-collapsed .vertical-tab-right {
+    right: 0;
+}
+
+/* ==========================================================================
+   4. ZONE CENTRALE (Ajustement dynamique des marges)
+   ========================================================================== */
+.content-area {
+    margin-left: 315px; /* 280px sidebar + 35px marge confort */
+    margin-right: 475px; /* 440px sidebar + 35px marge confort */
+    padding: 15px 30px 60px 30px;
+    min-height: 100vh;
+    transition: margin-left 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), margin-right 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+body.sidebar-left-collapsed .content-area {
+    margin-left: 45px;
+}
+
+body.sidebar-right-collapsed .content-area {
+    margin-right: 45px;
+}
+
+/* Onglets figés */
+.sticky-tabs-container {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 1000;
+    padding-top: 10px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.nav-tabs .nav-link {
+    color: #495057;
+    font-weight: 500;
+    border: none;
+}
+
+    .nav-tabs .nav-link.active {
+        color: #198754;
+        border-bottom: 3px solid #198754;
+        background-color: transparent;
+        font-weight: 600;
+    }
+
+/* Cartes, Liens & Animations */
 .card {
-    margin-bottom: 30px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
     border: 1px solid #dee2e6;
-    transition: border-color 0.4s ease, box-shadow 0.4s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
     .card.highlight {
         border-color: #0d6efd !important;
-        box-shadow: 0 0 12px rgba(13, 110, 253, 0.35) !important;
+        box-shadow: 0 0 14px rgba(13, 110, 253, 0.5) !important;
     }
 
-/* Liens des types de données */
 .type-link {
     cursor: pointer;
     color: #0d6efd;
@@ -79,116 +223,34 @@ body {
         text-decoration: underline;
     }
 
-/* --- Onglets figés --- */
-.sticky-tabs-container {
-    position: sticky;
-    top: 0;
-    background-color: #f8f9fa;
-    z-index: 900;
-    padding-top: 15px;
-    padding-bottom: 5px;
-    margin-bottom: 25px;
-    border-bottom: 1px solid #dee2e6;
-}
-
-.nav-tabs {
-    border-bottom: none;
-}
-
-    .nav-tabs .nav-link {
-        color: #495057;
-        font-weight: 500;
-        border: none;
-    }
-
-        .nav-tabs .nav-link.active {
-            color: #0d6efd;
-            border-bottom: 3px solid #0d6efd;
-            background-color: transparent;
-        }
-
-/* Conteneur descriptif tronqué */
+/* Conteneur descriptif repliable */
 .method-desc-container {
     position: relative;
-    max-height: 72px; /* ~3 lignes */
+    max-height: 74px;
     overflow: hidden;
     transition: max-height 0.3s ease;
 }
 
-    /* État déplié */
     .method-desc-container.expanded {
         max-height: 1200px;
     }
 
-    /* Dégradé de fondu blanc quand le texte est replié */
     .method-desc-container:not(.expanded)::after {
         content: "";
         position: absolute;
         bottom: 0;
         left: 0;
         right: 0;
-        height: 30px;
+        height: 32px;
         background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
         pointer-events: none;
     }
 
-/* Bouton Voir plus / Voir moins */
 .btn-toggle-desc {
     font-size: 0.82rem;
     font-weight: 600;
     color: #0d6efd;
     cursor: pointer;
     text-decoration: none;
-    padding: 0;
-    margin-top: 4px;
     display: inline-block;
-}
-
-.btn-toggle-desc:hover {
-    text-decoration: underline;
-}
-
-/* Animation fluide du menu et du contenu */
-.sidebar {
-    transition: transform 0.3s ease;
-}
-
-.content {
-    transition: margin-left 0.3s ease;
-}
-
-/* Bouton flottant de bascule */
-.sidebar-toggle-btn {
-    position: fixed;
-    top: 15px;
-    left: 330px;
-    z-index: 1100;
-    width: 34px;
-    height: 34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    border: 1px solid #495057;
-    background-color: #212529;
-    color: #ffffff;
-    transition: left 0.3s ease, background-color 0.2s ease;
-}
-
-    .sidebar-toggle-btn:hover {
-        background-color: #343a40;
-        color: #0d6efd;
-    }
-
-/* État rétracté */
-body.sidebar-collapsed .sidebar {
-    transform: translateX(-100%);
-}
-
-body.sidebar-collapsed .content {
-    margin-left: 0;
-}
-
-body.sidebar-collapsed .sidebar-toggle-btn {
-    left: 15px;
 }

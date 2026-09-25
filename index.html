@@ -2,61 +2,86 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Documentation API PRIOS E - Externalisée</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation API PRIOS E</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="icon" href="data:,">
     <link rel="stylesheet" href="style.css">
-
-    <!-- On importe NOTRE logique JavaScript (L'attribut defer permet de ne pas bloquer le chargement de la page) -->
-    <script src="app.js" defer></script>
-
+    <link rel="icon" href="data:,">
 </head>
-<body>
-    <!-- Bouton flottant pour masquer / afficher la sidebar -->
-    <button type="button"
-            id="sidebarToggleBtn"
-            class="btn btn-dark btn-sm sidebar-toggle-btn shadow-sm"
-            onclick="toggleSidebar()"
-            title="Masquer / Afficher le sommaire">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
-        </svg>
-    </button>
-    <div class="sidebar">
-        <h4 class="text-white mb-4">PRIOS E - Navigation</h4>
-        <div id="sidebar-content"></div>
-    </div>
+<body class="sidebar-right-collapsed">
 
-    <div class="content">
-        <h1 class="mb-2">Documentation Interactive Web Services PRIOS E</h1>
-        <p class="text-muted mb-4">Mise à jour de la documentation : <strong id="doc-date">Chargement...</strong></p>
-        <p class="lead text-muted">Retrouvez l'intégralité des méthodes, types de données, champs obligatoires et commentaires.</p>
+    <!-- 1. VOLET GAUCHE (MÉTHODES) -->
+    <aside class="sidebar sidebar-left" id="leftSidebar">
+        <div class="sidebar-header">
+            <h5 class="mb-0 text-white fw-bold">Méthodes</h5>
+            <small class="text-muted" id="methodsCount">0 méthode</small>
+        </div>
+        <div class="sidebar-content" id="methodsList">
+            <!-- Liste injectée par app.js -->
+        </div>
+    </aside>
+
+    <!-- Languette verticale gauche -->
+    <button type="button" class="vertical-tab vertical-tab-left" id="leftTabBtn" onclick="toggleLeftSidebar()" title="Masquer / Afficher les méthodes">
+        <span class="tab-indicator" id="leftTabIndicator">◀</span>
+        <span class="tab-text">MÉTHODES</span>
+    </button>
+
+    <!-- 2. ZONE CENTRALE (DÉTAIL DE LA MÉTHODE ACTIVE) -->
+    <main class="content-area">
+        <!-- Barre d'onglets figée en haut -->
+        <header class="sticky-tabs-container">
+            <div class="d-flex justify-content-between align-items-center mb-2 px-2">
+                <h4 class="mb-0 fw-bold text-dark">PRIOS E <span class="text-secondary fw-normal fs-6">| Web Services</span></h4>
+                <div class="text-muted small">Date doc : <span id="doc-date" class="badge bg-secondary">...</span></div>
+            </div>
+            <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+                <!-- Onglets générés dynamiquement -->
+            </ul>
+        </header>
 
         <div id="error-container"></div>
 
-        <div class="sticky-tabs-container">
-            <ul class="nav nav-tabs" id="mainTabs" role="tablist">
-            </ul>
+        <!-- Conteneur d'affichage de la méthode sélectionnée -->
+        <div id="activeMethodContainer" class="p-2">
+            <!-- Fiche méthode injectée par app.js -->
         </div>
+    </main>
 
-        <div class="tab-content" id="mainTabsContent">
+    <!-- Languette verticale droite -->
+    <button type="button" class="vertical-tab vertical-tab-right" id="rightTabBtn" onclick="toggleRightSidebar()" title="Masquer / Afficher les types">
+        <span class="tab-indicator" id="rightTabIndicator">◀</span>
+        <span class="tab-text">TYPES DE DONNÉES</span>
+    </button>
+
+    <!-- 3. VOLET DROIT (DICTIONNAIRE DES TYPES) -->
+    <aside class="sidebar sidebar-right" id="rightSidebar">
+        <div class="sidebar-header d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="mb-0 text-white fw-bold">Types de données</h5>
+                <small class="text-muted" id="typesCount">Structures associées</small>
+            </div>
+            <button class="btn btn-sm btn-outline-secondary text-white py-0 px-2" onclick="toggleRightSidebar(false)">✕</button>
         </div>
-    </div>
+        <div class="sidebar-content" id="typesContainer">
+            <!-- Cartes des types injectées par app.js -->
+        </div>
+    </aside>
 
-    <!-- Modal -->
-    <div class="modal fade" id="usageModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="usageModalLabel">Utilisation du type</h5>
+    <!-- Fenêtre modale : Analyse d'impact -->
+    <div class="modal fade" id="usageModal" tabindex="-1" aria-labelledby="usageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content shadow">
+                <div class="modal-header bg-dark text-white py-2">
+                    <h5 class="modal-title fs-6" id="usageModalLabel">Utilisation du type</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="usageModalBody" style="font-size: 1.05em;">
-                </div>
+                <div class="modal-body" id="usageModalBody"></div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
