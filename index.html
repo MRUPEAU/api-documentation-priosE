@@ -10,14 +10,14 @@
 </head>
 <body class="sidebar-right-collapsed">
 
-    <!-- 1. VOLET GAUCHE (MÉTHODES) -->
+    <!-- 1. VOLET GAUCHE : LISTE DES MÉTHODES -->
     <aside class="sidebar sidebar-left" id="leftSidebar">
         <div class="sidebar-header">
             <h5 class="mb-0 text-white fw-bold">Méthodes</h5>
             <small class="text-muted" id="methodsCount">0 méthode</small>
         </div>
         <div class="sidebar-content" id="methodsList">
-            <!-- Liste injectée par app.js -->
+            <!-- Injecté par app.js -->
         </div>
     </aside>
 
@@ -27,9 +27,9 @@
         <span class="tab-text">MÉTHODES</span>
     </button>
 
-    <!-- 2. ZONE CENTRALE (DÉTAIL DE LA MÉTHODE ACTIVE) -->
+    <!-- 2. ZONE CENTRALE -->
     <main class="content-area">
-        <!-- Barre d'onglets figée en haut -->
+        <!-- En-tête avec onglets figés -->
         <header class="sticky-tabs-container">
             <div class="d-flex justify-content-between align-items-center mb-2 px-2">
                 <h4 class="mb-0 fw-bold text-dark">PRIOS E <span class="text-secondary fw-normal fs-6">| Web Services</span></h4>
@@ -40,11 +40,14 @@
             </ul>
         </header>
 
+        <!-- Fil d'Ariane & Navigation de retour -->
+        <nav aria-label="breadcrumb" id="breadcrumbContainer" class="mb-3 px-1"></nav>
+
         <div id="error-container"></div>
 
-        <!-- Conteneur d'affichage de la méthode sélectionnée -->
-        <div id="activeMethodContainer" class="p-2">
-            <!-- Fiche méthode injectée par app.js -->
+        <!-- Fiche centrale active (Méthode ou Type) -->
+        <div id="activeContentContainer">
+            <!-- Injecté par app.js -->
         </div>
     </main>
 
@@ -54,17 +57,17 @@
         <span class="tab-text">TYPES DE DONNÉES</span>
     </button>
 
-    <!-- 3. VOLET DROIT (DICTIONNAIRE DES TYPES) -->
+    <!-- 3. VOLET DROIT : LISTE COMPACTE DES TYPES -->
     <aside class="sidebar sidebar-right" id="rightSidebar">
         <div class="sidebar-header d-flex justify-content-between align-items-center">
             <div>
                 <h5 class="mb-0 text-white fw-bold">Types de données</h5>
-                <small class="text-muted" id="typesCount">Structures associées</small>
+                <small class="text-muted" id="typesCount">0 type</small>
             </div>
             <button class="btn btn-sm btn-outline-secondary text-white py-0 px-2" onclick="toggleRightSidebar(false)">✕</button>
         </div>
-        <div class="sidebar-content" id="typesContainer">
-            <!-- Cartes des types injectées par app.js -->
+        <div class="sidebar-content" id="typesList">
+            <!-- Injecté par app.js -->
         </div>
     </aside>
 

@@ -7,6 +7,8 @@
 let apiData = {};
 let currentServiceId = '';
 let currentMethodName = '';
+let currentView = 'method'; // 'method' ou 'type'
+let lastConsultedMethod = '';
 
 // ====================================================================
 // 1. CHARGEMENT ASYNCHRONE DES DONNÉES
@@ -20,7 +22,6 @@ fetch('api_data.json')
         apiData = data;
         const docDateEl = document.getElementById('doc-date');
         if (docDateEl) docDateEl.textContent = apiData.doc_date || "Non spécifiée";
-
         initApp();
     })
     .catch(error => {
@@ -37,7 +38,7 @@ fetch('api_data.json')
     });
 
 // ====================================================================
-// 2. FONCTIONS UTILITAIRES
+// 2. UTILITAIRES & FORMATAGE
 // ====================================================================
 function escapeHtml(unsafe) {
     return (unsafe || '')
@@ -59,7 +60,7 @@ function cleanTypeName(typeStr) {
         .trim();
 }
 
-// Transforme un nom de type en lien ouvrant automatiquement le volet droit
+// Convertit un type en lien cliquable qui ouvre la fiche du type au centre
 function linkify(typeStr) {
     if (!typeStr || typeof typeStr !== 'string') return "";
 
@@ -83,7 +84,7 @@ function linkify(typeStr) {
         const cleanTypeEscaped = escapeHtml(cleanType);
         return escapedType.replace(
             cleanTypeEscaped,
-            `<a class="type-link" href="javascript:void(0)" onclick="navigateToType('${targetServiceId}', '${cleanTypeEscaped}')">${cleanTypeEscaped}</a>`
+            `<a class="type-link" href="javascript:void(0)" onclick="selectType('${cleanTypeEscaped}', '${targetServiceId}')">${cleanTypeEscaped}</a>`
         );
     }
 
@@ -106,7 +107,7 @@ function toggleDescription(btn) {
 }
 
 // ====================================================================
-// 3. CONTRÔLE DES VOLETS LATÉRAUX & TRANCHES VERTICALES
+// 3. CONTRÔLE DES VOLETS LATÉRAUX (Languettes)
 // ====================================================================
 function toggleLeftSidebar(forceState) {
     const body = document.body;
@@ -131,7 +132,7 @@ function toggleRightSidebar(forceState) {
 }
 
 // ====================================================================
-// 4. INITIALISATION & NAVIGATION GLOBALE
+// 4. NAVIGATION GLOBALE & ONGLETS
 // ====================================================================
 function initApp() {
     if (!apiData.services || apiData.services.length === 0) return;
@@ -155,7 +156,6 @@ function initApp() {
 function selectService(serviceId, preferredMethodName) {
     currentServiceId = serviceId;
 
-    // Mise à jour de l'onglet actif
     document.querySelectorAll('#mainTabs .nav-link').forEach(btn => btn.classList.remove('active'));
     const activeTabBtn = document.getElementById(`${serviceId}-tab`);
     if (activeTabBtn) activeTabBtn.classList.add('active');
@@ -163,13 +163,9 @@ function selectService(serviceId, preferredMethodName) {
     const service = apiData.services.find(s => s.id === serviceId);
     if (!service) return;
 
-    // 1. Mise à jour de la colonne de gauche (Méthodes uniquement)
     updateLeftSidebar(service);
-
-    // 2. Mise à jour de la colonne de droite (Dictionnaire des types du service)
     updateRightSidebar(service);
 
-    // 3. Sélection de la méthode
     let targetMethod = null;
     if (preferredMethodName && service.methods) {
         targetMethod = service.methods.find(m => m.name === preferredMethodName);
@@ -181,7 +177,8 @@ function selectService(serviceId, preferredMethodName) {
     if (targetMethod) {
         selectMethod(targetMethod.name);
     } else {
-        document.getElementById('activeMethodContainer').innerHTML = `
+        document.getElementById('breadcrumbContainer').innerHTML = '';
+        document.getElementById('activeContentContainer').innerHTML = `
             <div class="alert alert-secondary text-center my-4">
                 Aucune méthode n'est disponible dans ce domaine métier.
             </div>
@@ -190,7 +187,7 @@ function selectService(serviceId, preferredMethodName) {
 }
 
 // ====================================================================
-// 5. RENDU DU MENU GAUCHE & FICHE MÉTHODE CENTRALE
+// 5. RENDU DU MENU GAUCHE (MÉTHODES) & DU MENU DROIT (TYPES)
 // ====================================================================
 function updateLeftSidebar(service) {
     const listContainer = document.getElementById('methodsList');
@@ -200,50 +197,115 @@ function updateLeftSidebar(service) {
     countEl.textContent = `${methods.length} méthode${methods.length > 1 ? 's' : ''}`;
 
     if (methods.length === 0) {
-        listContainer.innerHTML = '<p class="text-muted small">Aucune méthode.</p>';
+        listContainer.innerHTML = '<p class="text-muted small p-2">Aucune méthode.</p>';
         return;
     }
 
     listContainer.innerHTML = methods.map(m => `
         <a href="javascript:void(0)" 
-           class="sidebar-method-link" 
+           class="sidebar-item-link" 
            id="menu-method-${m.name}"
            title="${escapeHtml(m.name)}"
            onclick="selectMethod('${m.name}')">
-           ${escapeHtml(m.name)}
+           <span class="text-truncate">${escapeHtml(m.name)}</span>
         </a>
     `).join('');
 }
 
-function selectMethod(methodName) {
-    currentMethodName = methodName;
+function updateRightSidebar(service) {
+    const listContainer = document.getElementById('typesList');
+    const countEl = document.getElementById('typesCount');
+    const types = service.types || [];
 
-    // Mise en surbrillance dans le menu gauche
-    document.querySelectorAll('.sidebar-method-link').forEach(el => el.classList.remove('active'));
-    const activeLink = document.getElementById(`menu-method-${methodName}`);
-    if (activeLink) activeLink.classList.add('active');
+    countEl.textContent = `${types.length} type${types.length > 1 ? 's' : ''}`;
+
+    if (types.length === 0) {
+        listContainer.innerHTML = '<p class="text-muted small p-2">Aucun type de données.</p>';
+        return;
+    }
+
+    listContainer.innerHTML = types.map(t => `
+        <a href="javascript:void(0)" 
+           class="sidebar-item-link" 
+           id="menu-type-${t.name}"
+           title="${escapeHtml(t.name)}"
+           onclick="selectType('${t.name}', '${service.id}')">
+           <span class="text-truncate">${escapeHtml(t.name)}</span>
+           <span class="badge bg-secondary-subtle text-dark border ms-1">${(t.props || []).length}</span>
+        </a>
+    `).join('');
+}
+
+// ====================================================================
+// 6. GESTION DU FIL D'ARIANE
+// ====================================================================
+function updateBreadcrumb(serviceTitle, itemName, isTypeView, returnMethodName) {
+    const container = document.getElementById('breadcrumbContainer');
+
+    if (!isTypeView) {
+        container.innerHTML = `
+            <ol class="breadcrumb mb-0 align-items-center">
+                <li class="breadcrumb-item"><span class="text-secondary">${escapeHtml(serviceTitle)}</span></li>
+                <li class="breadcrumb-item active fw-bold text-success" aria-current="page">${escapeHtml(itemName)}</li>
+            </ol>
+        `;
+    } else {
+        const backBtnHtml = returnMethodName ? `
+            <button class="btn btn-sm btn-outline-primary me-2 py-0 px-2 fw-semibold" onclick="selectMethod('${returnMethodName}')">
+                ← Revenir à ${escapeHtml(returnMethodName)}
+            </button>
+        ` : '';
+
+        container.innerHTML = `
+            <div class="d-flex align-items-center justify-content-between bg-light p-2 rounded border">
+                <ol class="breadcrumb mb-0 p-0 bg-transparent">
+                    <li class="breadcrumb-item"><span class="text-secondary">${escapeHtml(serviceTitle)}</span></li>
+                    ${returnMethodName ? `<li class="breadcrumb-item"><a href="javascript:void(0)" onclick="selectMethod('${returnMethodName}')">${escapeHtml(returnMethodName)}</a></li>` : ''}
+                    <li class="breadcrumb-item active fw-bold text-primary" aria-current="page">${escapeHtml(itemName)}</li>
+                </ol>
+                ${backBtnHtml}
+            </div>
+        `;
+    }
+}
+
+// ====================================================================
+// 7. SÉLECTION ET RENDU AU CENTRE : FICHE MÉTHODE
+// ====================================================================
+function selectMethod(methodName) {
+    currentView = 'method';
+    currentMethodName = methodName;
+    lastConsultedMethod = methodName;
+
+    // Mise en surbrillance menu gauche, déselection menu droit
+    document.querySelectorAll('.sidebar-item-link').forEach(el => el.classList.remove('active-method', 'active-type'));
+    const activeMethodLink = document.getElementById(`menu-method-${methodName}`);
+    if (activeMethodLink) activeMethodLink.classList.add('active-method');
 
     const service = apiData.services.find(s => s.id === currentServiceId);
     const method = service ? service.methods.find(m => m.name === methodName) : null;
 
-    if (method) renderMethodDetail(method);
+    if (service && method) {
+        updateBreadcrumb(service.title, method.name, false);
+        renderMethodDetail(method);
+    }
 }
 
 function renderMethodDetail(m) {
-    const container = document.getElementById('activeMethodContainer');
+    const container = document.getElementById('activeContentContainer');
 
-    // Descriptif (gère texte brut ou tableau de paragraphes/listes)
     const descContent = Array.isArray(m.description) ? m.description.join('\n') : (m.description || '');
     const isLongDesc = descContent && (descContent.length > 160 || descContent.includes('<ul>') || descContent.includes('<p'));
 
     let html = `
         <div class="card shadow-sm border-0 mb-4" id="method-${m.name}">
-            <div class="card-header bg-success text-white d-flex align-items-center py-3">
+            <div class="card-header bg-success text-white py-3">
                 <h5 class="mb-0 fw-bold font-monospace">${escapeHtml(m.name)}</h5>
             </div>
             <div class="card-body p-4">
     `;
 
+    // Descriptif
     if (isLongDesc) {
         html += `
             <div class="method-desc-container">
@@ -312,37 +374,139 @@ function renderMethodDetail(m) {
         html += `<p class="text-muted mb-3"><em>Aucun paramètre entrant.</em></p>`;
     }
 
-    // Informations retournées
+    // Informations retournées (avec intégration des tableaux de propriétés comme avant)
     html += `<h6 class="text-secondary fw-bold small text-uppercase mt-4 mb-2">Retourne :</h6>`;
     const multiReturns = Array.isArray(m.returns_types) ? m.returns_types : (Array.isArray(m.returns_type) ? m.returns_type : null);
 
     if (multiReturns && multiReturns.length > 0) {
         html += `<div class="mb-3">`;
         multiReturns.forEach(retItem => {
+            const cleanType = cleanTypeName(retItem.type);
+            let matchedType = null;
+            for (let s of apiData.services) {
+                if (s.types) {
+                    matchedType = s.types.find(t => t.name === cleanType);
+                    if (matchedType) break;
+                }
+            }
+
             html += `
-                <div class="card mb-2 border">
+                <div class="card mb-3 border">
                     <div class="card-header bg-light text-dark d-flex justify-content-between align-items-center py-2">
                         <span class="fw-semibold">${escapeHtml(retItem.label || 'Liste')} : ${linkify(retItem.type)}</span>
                         ${retItem.comment ? `<small class="text-muted">${escapeHtml(retItem.comment)}</small>` : ''}
                     </div>
+                    ${matchedType ? `
+                    <div class="card-body p-0">
+                        <div class="table-responsive" style="max-height: 260px; overflow-y: auto;">
+                            <table class="table table-striped table-hover table-bordered mb-0 align-middle">
+                                <thead class="table-light sticky-top">
+                                    <tr>
+                                        <th class="ps-3 w-25">Propriété</th>
+                                        <th>Type</th>
+                                        <th class="text-center" style="width: 80px;">Obl.</th>
+                                        <th>Commentaires</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${matchedType.props.map(p => `
+                                        <tr>
+                                            <td class="ps-3"><code>${escapeHtml(p.name)}</code></td>
+                                            <td>${linkify(p.type)}</td>
+                                            <td class="text-center text-danger fw-bold">${escapeHtml(p.obl || '')}</td>
+                                            <td class="small text-secondary">${escapeHtml(p.comment || '')}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>` : ''}
                 </div>
             `;
         });
         html += `</div>`;
     } else {
         const returnTypeRaw = m.returns || m.returns_type;
-        if (returnTypeRaw) {
-            html += `
-                <div class="card mb-3 border">
-                    <div class="card-header bg-light text-dark py-2">
-                        <strong>Type de retour : </strong> ${linkify(returnTypeRaw)}
+        if (typeof returnTypeRaw === 'string') {
+            const cleanRetType = cleanTypeName(returnTypeRaw);
+            let matchedType = null;
+
+            for (let s of apiData.services) {
+                if (s.types) {
+                    matchedType = s.types.find(t => t.name === cleanRetType);
+                    if (matchedType) break;
+                }
+            }
+
+            if (matchedType) {
+                html += `
+                    <div class="card mb-3 border">
+                        <div class="card-header bg-light text-dark py-2">
+                            <strong>Type de retour : </strong> ${linkify(returnTypeRaw)}
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive" style="max-height: 260px; overflow-y: auto;">
+                                <table class="table table-striped table-hover table-bordered mb-0 align-middle">
+                                    <thead class="table-light sticky-top">
+                                        <tr>
+                                            <th class="ps-3 w-25">Propriété</th>
+                                            <th>Type</th>
+                                            <th class="text-center" style="width: 80px;">Obl.</th>
+                                            <th>Commentaires</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${matchedType.props.map(p => `
+                                            <tr>
+                                                <td class="ps-3"><code>${escapeHtml(p.name)}</code></td>
+                                                <td>${linkify(p.type)}</td>
+                                                <td class="text-center text-danger fw-bold">${escapeHtml(p.obl || '')}</td>
+                                                <td class="small text-secondary">${escapeHtml(p.comment || '')}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+            } else if (m.returns_props && m.returns_props.length > 0) {
+                html += `
+                    <div class="card mb-3 border">
+                        <div class="card-header bg-light text-dark py-2">
+                            <strong>Type de retour : </strong> ${linkify(m.returns_type || 'Objet détaillé')}
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive" style="max-height: 260px; overflow-y: auto;">
+                                <table class="table table-striped table-hover table-bordered mb-0 align-middle">
+                                    <thead class="table-light sticky-top">
+                                        <tr>
+                                            <th class="ps-3 w-25">Propriété</th>
+                                            <th>Type</th>
+                                            <th>Commentaires</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${m.returns_props.map(p => `
+                                            <tr>
+                                                <td class="ps-3"><code>${escapeHtml(p.name)}</code></td>
+                                                <td>${linkify(p.type)}</td>
+                                                <td class="small text-secondary">${escapeHtml(p.comment || '')}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (returnTypeRaw) {
+                html += `<p class="fs-6">${linkify(returnTypeRaw)}</p>`;
+            }
         }
     }
 
-    // Encadré comportement nominal
+    // Comportement nominal
     if (m.return_behavior) {
         html += `
             <div class="alert alert-info py-2 px-3 my-3 small d-flex align-items-center">
@@ -352,7 +516,7 @@ function renderMethodDetail(m) {
         `;
     }
 
-    // Catalogue des anomalies
+    // Catalogue anomalies
     if (m.errors && m.errors.length > 0) {
         const errorCollapseId = `errors-${m.name.replace(/[^a-zA-Z0-9_-]/g, '_')}`;
         html += `
@@ -392,49 +556,83 @@ function renderMethodDetail(m) {
 
     html += `</div></div>`;
     container.innerHTML = html;
-
-    // Réinitialise les infobulles Bootstrap
     initTooltips();
 }
 
 // ====================================================================
-// 6. VOLET DROIT (DICTIONNAIRE DES TYPES) & NAVIGATION CROISÉE
+// 8. SÉLECTION ET RENDU AU CENTRE : FICHE TYPE DE DONNÉES
 // ====================================================================
-function updateRightSidebar(service) {
-    const container = document.getElementById('typesContainer');
-    const countEl = document.getElementById('typesCount');
-    const types = service.types || [];
+function selectType(typeName, targetServiceId) {
+    currentView = 'type';
 
-    countEl.textContent = `${types.length} type${types.length > 1 ? 's' : ''} répertorié${types.length > 1 ? 's' : ''}`;
+    // Bascule d'onglet si le type provient d'un autre domaine
+    if (targetServiceId && targetServiceId !== currentServiceId) {
+        currentServiceId = targetServiceId;
+        document.querySelectorAll('#mainTabs .nav-link').forEach(btn => btn.classList.remove('active'));
+        const activeTabBtn = document.getElementById(`${targetServiceId}-tab`);
+        if (activeTabBtn) activeTabBtn.classList.add('active');
 
-    if (types.length === 0) {
-        container.innerHTML = '<p class="text-muted small p-2">Aucun type de données pour ce domaine.</p>';
-        return;
+        const service = apiData.services.find(s => s.id === targetServiceId);
+        if (service) {
+            updateLeftSidebar(service);
+            updateRightSidebar(service);
+        }
     }
 
-    container.innerHTML = types.map(t => `
-        <div class="card mb-3 border-secondary" id="type-${t.name}">
-            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-2 px-3">
-                <span class="font-monospace small fw-bold text-truncate" style="max-width: 260px;" title="${escapeHtml(t.name)}">${escapeHtml(t.name)}</span>
-                <button class="btn btn-outline-light btn-sm py-0 px-2 fs-7" onclick="showUsages('${escapeHtml(t.name)}')">
-                    Impact
+    // Mise en surbrillance menu droit, déselection menu gauche
+    document.querySelectorAll('.sidebar-item-link').forEach(el => el.classList.remove('active-method', 'active-type'));
+    const activeTypeLink = document.getElementById(`menu-type-${typeName}`);
+    if (activeTypeLink) activeTypeLink.classList.add('active-type');
+
+    let matchedType = null;
+    let foundService = null;
+
+    for (let s of apiData.services) {
+        if (s.types) {
+            matchedType = s.types.find(t => t.name === typeName);
+            if (matchedType) {
+                foundService = s;
+                break;
+            }
+        }
+    }
+
+    if (matchedType && foundService) {
+        updateBreadcrumb(foundService.title, matchedType.name, true, lastConsultedMethod);
+        renderTypeDetail(matchedType);
+    }
+}
+
+function renderTypeDetail(t) {
+    const container = document.getElementById('activeContentContainer');
+
+    let html = `
+        <div class="card shadow-sm border-0 mb-4" id="type-${t.name}">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3">
+                <h5 class="mb-0 font-monospace">${escapeHtml(t.name)}</h5>
+                <button class="btn btn-outline-light btn-sm" onclick="showUsages('${escapeHtml(t.name)}')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-search me-1" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                    </svg>
+                    Où est-ce utilisé ? (Impact)
                 </button>
             </div>
             <div class="card-body p-0">
-                <div class="table-responsive" style="max-height: 260px; overflow-y: auto;">
-                    <table class="table table-sm table-striped table-hover mb-0 align-middle">
-                        <thead class="table-light sticky-top">
+                <!-- Tableau complet : aucune limitation de hauteur, aucune scrollbar interne -->
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover mb-0 align-middle">
+                        <thead class="table-light">
                             <tr>
-                                <th class="ps-2">Propriété</th>
+                                <th class="ps-4 w-25">Propriété</th>
                                 <th>Type</th>
-                                <th class="text-center">Obl.</th>
-                                <th>Commentaire</th>
+                                <th class="text-center" style="width: 80px;">Obl.</th>
+                                <th>Commentaires</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${(t.props || []).map(p => `
                                 <tr>
-                                    <td class="ps-2"><code>${escapeHtml(p.name)}</code></td>
+                                    <td class="ps-4"><code>${escapeHtml(p.name)}</code></td>
                                     <td>${linkify(p.type)}</td>
                                     <td class="text-center text-danger fw-bold">${escapeHtml(p.obl || '')}</td>
                                     <td class="small text-secondary">${escapeHtml(p.comment || '')}</td>
@@ -445,34 +643,23 @@ function updateRightSidebar(service) {
                 </div>
             </div>
         </div>
-    `).join('');
-}
+    `;
 
-// Navigation ciblée déclenchée par un lien de type dans la méthode
-function navigateToType(targetServiceId, typeName) {
-    // 1. Change d'onglet si le type appartient à un autre service
-    if (targetServiceId !== currentServiceId) {
-        selectService(targetServiceId, currentMethodName);
+    if (t.notes && t.notes.length > 0) {
+        html += `
+            <div class="p-3 mb-4 bg-light text-muted border rounded small">
+                <ul class="mb-0 ps-3">
+                    ${t.notes.map(note => `<li>${escapeHtml(note)}</li>`).join('')}
+                </ul>
+            </div>
+        `;
     }
 
-    // 2. Ouvre le volet de droite s'il était fermé
-    toggleRightSidebar(true);
-
-    // 3. Fait défiler jusqu'au type et applique la surbrillance
-    setTimeout(() => {
-        const target = document.getElementById(`type-${typeName}`);
-        if (target) {
-            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            target.classList.remove('highlight');
-            void target.offsetWidth;
-            target.classList.add('highlight');
-            setTimeout(() => target.classList.remove('highlight'), 2000);
-        }
-    }, 200);
+    container.innerHTML = html;
 }
 
 // ====================================================================
-// 7. ANALYSE D'IMPACT ("Où est-ce utilisé ?")
+// 9. ANALYSE D'IMPACT ("Où est-ce utilisé ?")
 // ====================================================================
 function showUsages(targetType) {
     const usages = [];
@@ -528,7 +715,7 @@ function showUsages(targetType) {
                                 usages.push(`
                                     <li class="mb-2">
                                         <strong>${escapeHtml(service.title)}</strong> : Propriété <code>${escapeHtml(p.name)}</code> du type 
-                                        <a class="type-link" href="javascript:void(0)" onclick="navigateToType('${service.id}', '${t.name}')">${escapeHtml(t.name)}</a>
+                                        <a class="type-link" href="javascript:void(0)" onclick="selectType('${t.name}', '${service.id}')">${escapeHtml(t.name)}</a>
                                     </li>
                                 `);
                             }
