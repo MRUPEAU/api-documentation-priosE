@@ -2464,11 +2464,11 @@
           "description": [
             "<p class=\"mb-2\">Cette méthode permet la récupération des ‘types’ de stock suivants :</p>",
             "<ul class=\"mb-1 ps-3\">",
-            "  <li><strong>Stock à vendre à horizon maxi [V] :</strong> Stock disponible – sorties prévues jusqu'à l'horizon maxi + commandes prévisionnelles.</li>",
-            "  <li><strong>Stock à vendre à horizon infini [T] :</strong> Stock disponible – sorties prévues jusqu'à l'infini + commandes prévisionnelles.</li>",
-            "  <li><strong>Stock réservé [R] :</strong> Commandes prévisionnelles affectées liées au PDV ou à la centrale.</li>",
+            "  <li><strong>[stock non dédié] Stock à vendre à horizon maxi [V] :</strong> \tStock disponible – quantités sorties prévues (commandes clients non affectées …) jusqu’à l’horizon maxi (horizon de la référence, sinon horizon maxi du paramétrage général) + commandes prévisionnelles (quantités affectées) (fonction du paramètre entrant correspondant ‘cdePrevisionnelle’).</li>",
+            "  <li><strong>[stock non dédié] Stock à vendre à horizon infini [T] :</strong> \tStock disponible – quantités sorties prévues (commandes clients non affectées …) jusqu’à l’horizon infini (sans notion de date) + commandes prévisionnelles (quantités affectées) (fonction du paramètre entrant correspondant ‘cdePrevisionnelle’).</li>",
+            "  <li><strong>Stock réservé [R] :</strong>Commandes prévisionnelles (quantités affectées) liées au point de vente ou centrale.</li>",
             "  <li><strong>Stock physique [P] :</strong> Stock physique réel en magasin ou entrepôt.</li>",
-            "  <li><strong>Stock maxi [M] :</strong> Stock disponible – sorties prévues + entrées prévues OA/OF.</li>",
+            "  <li><strong>Stock maxi [M] :</strong> Stock disponible – quantités sorties prévues (commandes clients non affectées …) jusqu’à l’horizon infini (sans notion de date) + commandes prévisionnelles (quantités commandées) (fonction du paramètre entrant correspondant ‘cdePrevisionnelle’) + quantités entrées prévues OA/OF.</li>",
             "</ul>"
           ],
           "params": [
