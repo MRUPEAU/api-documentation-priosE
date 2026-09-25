@@ -2631,7 +2631,13 @@
         },
         {
           "name": "expose_stock_lieu",
-          "description": "Cette méthode permet la récupération de stock sur entrepôt ou points de vente. Préconisation : il est fortement conseillé d’interroger les stocks tiers par tiers (un seul tiers dans la liste pNumTiers) dans un souci d’optimisation des performances.",
+          "description": [
+            "<p class=\"mb-2\">Cette méthode permet la récupération de stock sur entrepôt ou points de vente</p>",
+            "<p><strong>Préconisations :</strong></p>",
+            "<ul class=\"mb-1 ps-3\">",
+            "  <li>Il est fortement conseillé d’interroger les stocks tiers par tiers (un seul tiers dans la liste pNumTiers) dans un souci d’optimisation des performances.</li>",
+            "</ul>"
+          ],
           "params": [
             {
               "name": "socId",
@@ -2757,7 +2763,12 @@
         },
         {
           "name": "expose_delta_stock_lieu",
-          "description": "Cette méthode permet la récupération des stocks mouvementés depuis une date/heure de référence. Elle s’appuie sur les modifications du stock physique (le stock disponible et le stock à vendre étant des calculs). Préconisation : interroger tiers par tiers pour optimiser les performances.",
+          "description": [
+            "<p class=\"mb-1\">Cette méthode permet la récupération de stock mouvementés depuis la dernière date/heure.</p>",
+            "<p class=\"text-danger mb-3\">Cette méthode s’appuyant sur les modifications du stock physique, elle ne peut fonctionner totalement que si on demande la récupération du stock physique (le stock disponible et stock à vendre étant des calculs).</p>",
+            "<p class=\"mb-1\"><strong>Préconisations :</strong></p>",
+            "<p class=\"ps-3 mb-0\">- Il est fortement conseillé d’interroger les stocks tiers par tiers (un seul tiers dans la liste <code>pNumTiers</code>) dans un souci d’optimisation des performances.</p>"
+          ],
           "params": [
             {
               "name": "socId",
@@ -3021,7 +3032,11 @@
         },
         {
           "name": "integrer_mouvement_stock_pdv",
-          "description": "Cette méthode permet d’intégrer les mouvements de stock divers en provenance des points de vente. Le code PDV détermine le lieu de stock (possible également depuis un code lieu non connu en tant que PDV).",
+          "description": [
+            "<p class=\"mb-2\">Cette méthode permet d’intégrer les mouvements de stock divers en provenance des points de vente :</p>",
+            "<p class=\"ps-3 mb-1\">- le code PDV détermine le lieu de stock</p>",
+            "<p class=\"ps-3 mb-0\">- possible depuis un code lieu (non connu en tant que PDV)</p>"
+          ],
           "params": [
             {
               "name": "pIdtSociete",
